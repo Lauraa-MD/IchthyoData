@@ -190,7 +190,7 @@ const nomeBacia =
 });
 
 // CARREGAMENTO DO ARQUIVO GEOJSON
-fetch("dados/bacias/grandes_bacias.geojson")
+fetch("grandes_bacias.geojson")
     .then(function (resposta) {
         if (!resposta.ok) {
             throw new Error("Não foi possível carregar o GeoJSON.");
@@ -313,7 +313,7 @@ const camadaRios = L.geoJSON(null, {
     }
 });
 
-fetch("dados/rios/rios_principais_simplificados.geojson")
+fetch("rios_principais_simplificados.geojson")
     .then(function (resposta) {
         if (!resposta.ok) {
             throw new Error("Não foi possível carregar os rios.");
