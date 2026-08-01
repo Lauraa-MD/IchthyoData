@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Plataforma para consulta, integração e exploração biogeográfica de registros de ocorrência."
+    >
+
+    <title>IchthyoData | Exploração biogeográfica</title>
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+    >
+
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+
+<body>
+
+    <header class="cabecalho-principal">
+        <div class="cabecalho-conteudo">
+            <div>
+                <p class="identificacao-plataforma">
+                    Plataforma científica
+                </p>
+
+                <h1>IchthyoData</h1>
+
+                <p class="subtitulo">
+                    Integração e exploração de
+                    registros de ocorrência de peixes neotropicais
+                </p>
+            </div>
+
+            <nav aria-label="Navegação principal">
+                <a href="#consulta">Consultar</a>
+                <a href="#mapa">Mapa</a>
+                <a href="#importacao">Importar dados</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="apresentacao">
+            <div class="apresentacao-texto">
+                <p class="rotulo-secao">
+                    Dados de distribuição
+                </p>
+
+                <h2>
+                    Consulte, compare e explore ocorrências
+                    em um único ambiente
+                </h2>
+
+                <p>
+                    Pesquise registros de espécies, visualize sua
+                    distribuição geográfica e compare informações de
+                    diferentes fontes de dados.
+                </p>
+            </div>
+
+            <div class="fontes-disponiveis">
+                <p>
+                    <span class="indicador-fonte indicador-gbif"></span>
+                    <strong>GBIF:</strong> consulta disponível
+                </p>
+
+
+                <p>
+    <span class="indicador-fonte indicador-specieslink"></span>
+    <strong>speciesLink:</strong> consulta disponível
+</p>
+
+<p>
+                    <span class="indicador-fonte indicador-usuario"></span>
+                    <strong>Dados próprios:</strong> importação disponível
+                </p>
+
+
+            </div>
+        </section>
+
+        <section id="consulta" class="painel-consulta">
+            <div class="titulo-painel">
+                <div>
+                    <p class="rotulo-secao">Consulta taxonômica</p>
+                    <h2>Buscar espécie</h2>
+                </div>
+
+                <p>
+                    Digite o nome científico completo para consultar
+                    ocorrências com coordenadas na América do Sul.
+                </p>
+            </div>
+
+            <form class="busca-especies" id="formulario-busca">
+                <label for="campo-busca" class="sr-only">
+                    Nome científico
+                </label>
+
+                <input
+                    type="search"
+                    id="campo-busca"
+                    placeholder="Ex.: Astyanax lacustris"
+                    autocomplete="off"
+                    required
+                >
+
+                <button type="submit" id="botao-buscar">
+                    Buscar
+                </button>
+            </form>
+
+            <p
+                id="resultado-busca"
+                class="resultado-consulta"
+                aria-live="polite"
+            >
+                Nenhuma consulta realizada.
+            </p>
+        </section>
+
+        <section
+    class="indicadores-fontes"
+    aria-label="Resumo dos dados por fonte"
+>
+    <article class="painel-fonte painel-gbif">
+        <h3>
+            <span class="indicador-fonte indicador-gbif"></span>
+            GBIF
+        </h3>
+
+        <div class="grade-indicadores">
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="total-registros"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Registros encontrados
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="registros-exibidos"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Registros carregados
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="coordenadas-unicas"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Coordenadas únicas
+                </span>
+            </div>
+        </div>
+    </article>
+
+    <article class="painel-fonte painel-specieslink">
+        <h3>
+            <span
+                class="indicador-fonte indicador-specieslink"
+            ></span>
+            speciesLink
+        </h3>
+
+        <div class="grade-indicadores">
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="specieslink-encontrados"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Registros encontrados
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="specieslink-carregados"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Registros carregados
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="specieslink-coordenadas"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Coordenadas únicas
+                </span>
+            </div>
+        </div>
+    </article>
+
+    <article class="painel-fonte painel-usuario">
+        <h3>
+            <span
+                class="indicador-fonte indicador-usuario"
+            ></span>
+            Dados próprios
+        </h3>
+
+        <div class="grade-indicadores">
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="dados-registros"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Registros válidos
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="dados-especies"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Espécies
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="dados-coordenadas"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Coordenadas únicas
+                </span>
+            </div>
+        </div>
+    </article>
+</section>
+
+        <section id="mapa" class="area-exploracao">
+            <div class="cabecalho-mapa">
+                <div>
+                    <p class="rotulo-secao">
+                        Exploração espacial
+                    </p>
+
+                    <h2>Mapa de ocorrências</h2>
+                </div>
+
+                <p>
+                    Ative ou desative as camadas no controle localizado
+                    no canto superior direito do mapa.
+                </p>
+            </div>
+
+            <div id="mapa-especies"></div>
+        </section>
+
+        <section class="secao-possibilidades">
+    <div class="cabecalho-possibilidades">
+        <span>POSSIBILIDADES DA PLATAFORMA</span>
+        <h2>Explore e integre seus dados</h2>
+    </div>
+
+    <div class="grade-possibilidades">
+
+        <article class="janela-possibilidade">
+            <div class="icone-possibilidade">≈</div>
+
+            <div>
+                <h3>Bacias hidrográficas</h3>
+                <p>Identifique bacias e sub-bacias.</p>
+            </div>
+        </article>
+
+        <article class="janela-possibilidade">
+            <div class="icone-possibilidade">◇</div>
+
+            <div>
+                <h3>Ecorregiões</h3>
+                <p>Compare unidades biogeográficas.</p>
+            </div>
+        </article>
+
+        <article class="janela-possibilidade">
+            <div class="icone-possibilidade">△</div>
+
+            <div>
+                <h3>Altitude e relevo</h3>
+                <p>Visualize e extraia elevações.</p>
+            </div>
+        </article>
+
+        <article class="janela-possibilidade">
+            <div class="icone-possibilidade">＋</div>
+
+            <div>
+                <h3>Seus dados</h3>
+                <p>Importe, compare e baixe resultados.</p>
+            </div>
+        </article>
+
+    </div>
+</section>
+
+        <section id="importacao" class="importacao-dados">
+            <div class="titulo-painel">
+                <div>
+                    <p class="rotulo-secao">
+                        Dados do pesquisador
+                    </p>
+
+                    <h2>Importar ocorrências</h2>
+                </div>
+
+                <p>
+                    Adicione registros próprios para compará-los
+                    visualmente com os dados consultados.
+                </p>
+            </div>
+
+            <div class="orientacao-csv">
+                <strong>Estrutura necessária do CSV</strong>
+
+                <p>
+                    O arquivo deve conter as colunas
+                    <code>species</code>,
+                    <code>decimalLongitude</code> e
+                    <code>decimalLatitude</code>.
+                </p>
+            </div>
+
+            <label for="arquivo-csv">
+                Selecione o arquivo CSV
+            </label>
+
+            <input
+                type="file"
+                id="arquivo-csv"
+                accept=".csv,text/csv"
+            >
+
+            <div class="acoes-importacao">
+                <button type="button" id="botao-importar-csv">
+                    Adicionar ao mapa
+                </button>
+
+                <button
+                    type="button"
+                    id="botao-remover-csv"
+                    class="botao-secundario"
+                    disabled
+                >
+                    Remover dados importados
+                </button>
+            </div>
+
+            <div
+                id="resultado-importacao"
+                class="resultado-importacao"
+                aria-live="polite"
+            >
+                Nenhum arquivo importado.
+            </div>
+            
+            <div
+    id="painel-filtro-csv"
+    class="painel-filtro-csv"
+    hidden
+>
+    <div class="cabecalho-filtro-csv">
+        <div>
+            <span class="etiqueta-ferramenta">
+                FILTRAR DADOS IMPORTADOS
+            </span>
+
+            <h3>Selecionar registros</h3>
+
+            <p>
+                Escolha um gênero ou uma espécie para definir
+                quais registros serão exibidos e processados.
+            </p>
+        </div>
+    </div>
+
+    <div class="campos-filtro-csv">
+        <div class="campo-filtro-csv">
+            <label for="filtro-genero-csv">
+                Gênero
+            </label>
+
+            <select id="filtro-genero-csv">
+                <option value="">
+                    Todos os gêneros
+                </option>
+            </select>
+        </div>
+
+        <div class="campo-filtro-csv">
+            <label for="filtro-especie-csv">
+                Espécie
+            </label>
+
+            <select id="filtro-especie-csv">
+                <option value="">
+                    Todas as espécies
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="resumo-filtro-csv">
+        <strong id="quantidade-registros-filtrados">
+            0
+        </strong>
+
+        <span>
+            de
+            <strong id="quantidade-total-registros">
+                0
+            </strong>
+            registros exibidos no mapa
+        </span>
+    </div>
+
+    <button
+        type="button"
+        id="botao-limpar-filtro-csv"
+        class="botao-secundario"
+        disabled
+    >
+        Limpar seleção
+    </button>
+</div>
+            
+            <div
+
+    id="painel-extracao-altitude"
+    class="painel-extracao-altitude"
+>
+    <div class="cabecalho-extracao-altitude">
+        <div>
+            <span class="etiqueta-ferramenta">
+                ALTITUDE E RELEVO
+            </span>
+
+            <h3>
+                Extrair altitude dos registros
+            </h3>
+
+            <p>
+                Acrescente automaticamente a elevação estimada
+                aos registros válidos do arquivo importado.
+            </p>
+        </div>
+    </div>
+
+    <div class="informacoes-extracao">
+        <div>
+            <strong id="quantidade-registros-altitude">
+                0
+            </strong>
+            <span>registros disponíveis</span>
+        </div>
+
+        <div>
+            <strong>DEM</strong>
+            <span>resolução aproximada de 500 m</span>
+        </div>
+    </div>
+
+    <div class="acoes-extracao-altitude">
+        <button
+            type="button"
+            id="botao-extrair-altitude"
+            disabled
+        >
+            Extrair altitude
+        </button>
+
+        <button
+            type="button"
+            id="botao-baixar-altitude"
+            disabled
+        >
+            Baixar CSV com altitude
+        </button>
+    </div>
+
+    <p
+        id="resultado-extracao-altitude"
+        class="resultado-extracao-altitude"
+        aria-live="polite"
+    >
+        Importe um arquivo CSV para habilitar esta ferramenta.
+    </p>
+    
+    </div>
+        </section>
+
+        <div id="lista-dados-especies" hidden></div>
+
+    </main>
+
+    <footer>
+        <div>
+            <strong>IchthyoData</strong>
+
+            <p>
+                Plataforma de integração e exploração 
+                de registros de ocorrências.
+            </p>
+
+            <p>
+                Desenvolvida por Laura Modesti Donin — 2026
+            </p>
+        </div>
+
+        <img
+            class="logo-autoria"
+            src="imagens/logo-laura-donin.png"
+            alt="Logo de autoria de Laura M. Donin"
+        >
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist-browser/geotiff.js"></script>
+
+<script src="https://unpkg.com/georaster"></script>
+<script src="https://cdn.jsdelivr.net/npm/chroma-js@2.4.2/chroma.min.js"></script>
+<script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+
+<script src="js/config.js"></script>
+<script src="js/script.js"></script>
+
+</body>
+
+</html>

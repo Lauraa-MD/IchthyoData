@@ -1,0 +1,1343 @@
+/* ==================================================
+   CONFIGURAÇÕES GERAIS
+================================================== */
+
+:root {
+    --verde-escuro: #173f3a;
+    --verde-principal: #24675e;
+    --verde-claro: #dcebe6;
+    --verde-suave: #edf5f2;
+
+    --azul-dados: #3378b8;
+    --laranja-gbif: #f28c28;
+    --roxo-specieslink: #8064a2;
+
+    --fundo-pagina: #f3f5f2;
+    --fundo-cartao: #ffffff;
+    --texto-principal: #24312e;
+    --texto-secundario: #60706b;
+
+    --borda: #d5dfdb;
+    --sombra: 0 8px 24px rgba(22, 63, 57, 0.08);
+    --raio: 14px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background-color: var(--fundo-pagina);
+    color: var(--texto-principal);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+code {
+    padding: 2px 6px;
+    background-color: #e7eeeb;
+    border-radius: 4px;
+    color: var(--verde-escuro);
+    font-size: 0.92em;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* ==================================================
+   CABEÇALHO
+================================================== */
+
+.cabecalho-principal {
+    background:
+        linear-gradient(
+            135deg,
+            #123630 0%,
+            #1f5c53 70%,
+            #2e756a 100%
+        );
+    color: #ffffff;
+    padding: 30px 32px;
+}
+
+.cabecalho-conteudo {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.identificacao-plataforma {
+    margin: 0 0 4px;
+    color: #bcd8d1;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.cabecalho-principal h1 {
+    margin: 0;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1.1;
+}
+
+.subtitulo {
+    max-width: 680px;
+    margin: 10px 0 0;
+    color: #e5f0ed;
+    font-size: 17px;
+}
+
+.cabecalho-principal nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cabecalho-principal nav a {
+    padding: 8px 12px;
+    border-radius: 7px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cabecalho-principal nav a:hover,
+.cabecalho-principal nav a:focus {
+    background-color: rgba(255, 255, 255, 0.13);
+}
+
+
+/* ==================================================
+   CONTEÚDO PRINCIPAL
+================================================== */
+
+main {
+    width: calc(100% - 40px);
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 34px 0 60px;
+}
+
+.rotulo-secao {
+    margin: 0 0 4px;
+    color: var(--verde-principal);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.apresentacao {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.8fr);
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 28px;
+    padding: 28px 32px;
+    background-color: var(--fundo-cartao);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+}
+
+.apresentacao h2 {
+    max-width: 760px;
+    margin: 4px 0 10px;
+    color: var(--verde-escuro);
+    font-size: clamp(25px, 3vw, 36px);
+    line-height: 1.25;
+}
+
+.apresentacao-texto > p:last-child {
+    max-width: 780px;
+    margin-bottom: 0;
+    color: var(--texto-secundario);
+}
+
+.fontes-disponiveis {
+    padding: 18px 20px;
+    background-color: var(--verde-suave);
+    border: 1px solid #cfe1dc;
+    border-radius: 12px;
+}
+
+.fontes-disponiveis p {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.indicador-fonte {
+    flex: 0 0 auto;
+    width: 11px;
+    height: 11px;
+    margin-right: 9px;
+    border-radius: 50%;
+}
+
+.indicador-gbif {
+    background-color: var(--laranja-gbif);
+}
+
+.indicador-usuario {
+    background-color: var(--azul-dados);
+}
+
+.indicador-specieslink {
+    background-color: var(--roxo-specieslink);
+}
+
+.fonte-futura {
+    color: #7c8783;
+}
+
+
+/* ==================================================
+   PAINÉIS
+================================================== */
+
+.painel-consulta,
+.area-exploracao,
+.modulos-biogeograficos,
+.importacao-dados {
+    margin-bottom: 28px;
+    padding: 26px;
+    background-color: var(--fundo-cartao);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+}
+
+.titulo-painel,
+.cabecalho-mapa {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.titulo-painel h2,
+.cabecalho-mapa h2 {
+    margin: 2px 0 0;
+    color: var(--verde-escuro);
+    font-size: 25px;
+}
+
+.titulo-painel > p,
+.cabecalho-mapa > p {
+    max-width: 430px;
+    line-height: 1.6;
+}
+
+
+/* ==================================================
+   BUSCA
+================================================== */
+
+.busca-especies {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+}
+
+.busca-especies input {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 16px;
+    background-color: #ffffff;
+    border: 1px solid #aebeb9;
+    border-radius: 9px;
+    color: var(--texto-principal);
+    font-size: 16px;
+    outline: none;
+}
+
+.busca-especies input:focus {
+    border-color: var(--verde-principal);
+    box-shadow: 0 0 0 3px rgba(36, 103, 94, 0.14);
+}
+
+.busca-especies button,
+.importacao-dados button {
+    padding: 13px 20px;
+    border: 1px solid var(--verde-principal);
+    border-radius: 9px;
+    background-color: var(--verde-principal);
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    transition:
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
+}
+
+.busca-especies button:hover,
+.importacao-dados button:hover {
+    background-color: var(--verde-escuro);
+    border-color: var(--verde-escuro);
+}
+
+.busca-especies button:active,
+.importacao-dados button:active {
+    transform: translateY(1px);
+}
+
+.resultado-consulta {
+    min-height: 24px;
+    margin: 16px 0 0;
+    padding: 12px 14px;
+    background-color: var(--verde-suave);
+    border-left: 4px solid var(--verde-principal);
+    border-radius: 6px;
+    color: #37524c;
+}
+
+
+/* ==================================================
+   INDICADORES
+================================================== */
+
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.cartao-indicador {
+    display: flex;
+    flex-direction: column;
+    min-height: 118px;
+    padding: 20px;
+    background-color: var(--fundo-cartao);
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+}
+
+.valor-indicador {
+    margin-bottom: 4px;
+    color: var(--verde-principal);
+    font-size: 29px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.nome-indicador {
+    color: var(--texto-secundario);
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   MAPA
+================================================== */
+
+#mapa-especies {
+    width: 100%;
+    height: 620px;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #dce6e3;
+}
+
+.leaflet-control-layers {
+    border: 1px solid var(--borda) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16) !important;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 10px;
+}
+
+.leaflet-popup-content {
+    max-height: 330px;
+    overflow-y: auto;
+}
+
+.registro-popup {
+    margin-bottom: 10px;
+}
+
+.registro-popup:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ==================================================
+   LEGENDA DO MAPA
+================================================== */
+
+.legenda-mapa {
+    padding: 10px 12px;
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    color: var(--texto-principal);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.legenda-mapa strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.item-legenda {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 4px;
+}
+
+.simbolo-projeto {
+    display: inline-block;
+    width: 12px;
+    height: 18px;
+    background-color: var(--azul-dados);
+    border: 2px solid #ffffff;
+    border-radius: 8px 8px 8px 0;
+    transform: rotate(-45deg);
+}
+
+.simbolo-gbif {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: var(--laranja-gbif);
+    border: 2px solid #9a4d00;
+    border-radius: 50%;
+}
+
+
+/* ==================================================
+   MÓDULOS BIOGEOGRÁFICOS
+================================================== */
+
+.grade-modulos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.modulo-futuro {
+    padding: 20px;
+    background:
+        linear-gradient(
+            145deg,
+            #f8fbfa 0%,
+            var(--verde-suave) 100%
+        );
+    border: 1px solid #d4e3de;
+    border-radius: 11px;
+}
+
+.modulo-futuro span {
+    display: inline-block;
+    padding: 3px 8px;
+    background-color: #dce9e5;
+    border-radius: 20px;
+    color: var(--verde-principal);
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.modulo-futuro h3 {
+    margin: 14px 0 7px;
+    color: var(--verde-escuro);
+    font-size: 18px;
+}
+
+.modulo-futuro p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   IMPORTAÇÃO DE CSV
+================================================== */
+
+.orientacao-csv {
+    margin: 18px 0;
+    padding: 15px 17px;
+    background-color: var(--verde-suave);
+    border-left: 4px solid var(--verde-principal);
+    border-radius: 7px;
+}
+
+.orientacao-csv p {
+    margin: 5px 0 0;
+}
+
+.importacao-dados > label {
+    display: block;
+    margin: 20px 0 7px;
+    font-weight: bold;
+}
+
+.importacao-dados input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #fafcfb;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+}
+
+.acoes-importacao {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.importacao-dados .botao-secundario {
+    background-color: #ffffff;
+    border-color: #96a6a1;
+    color: #44534f;
+}
+
+.importacao-dados .botao-secundario:hover {
+    background-color: #edf1ef;
+    border-color: #6d7d78;
+}
+
+.importacao-dados button:disabled {
+    background-color: #d8dfdc;
+    border-color: #d8dfdc;
+    color: #82908b;
+    cursor: not-allowed;
+}
+
+.resultado-importacao {
+    margin-top: 18px;
+    padding: 13px 15px;
+    background-color: #f5f7f6;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+}
+
+
+/* ==================================================
+   RODAPÉ
+================================================== */
+
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 30px max(32px, calc((100% - 1320px) / 2));
+    background-color: var(--verde-escuro);
+    color: #ffffff;
+}
+
+footer p {
+    margin: 5px 0;
+    color: #d4e2de;
+    font-size: 14px;
+}
+
+.logo-autoria {
+    width: 135px;
+    height: auto;
+}
+
+
+/* ==================================================
+   RESPONSIVIDADE
+================================================== */
+
+@media (max-width: 950px) {
+    .cabecalho-conteudo,
+    .titulo-painel,
+    .cabecalho-mapa {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .apresentacao {
+        grid-template-columns: 1fr;
+    }
+
+    .indicadores {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grade-modulos {
+        grid-template-columns: 1fr;
+    }
+
+    #mapa-especies {
+        height: 540px;
+    }
+}
+
+@media (max-width: 650px) {
+    .cabecalho-principal {
+        padding: 24px 18px;
+    }
+
+    .cabecalho-principal nav {
+        width: 100%;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .cabecalho-principal nav a {
+        padding: 7px 0;
+    }
+
+    main {
+        width: calc(100% - 24px);
+        padding-top: 18px;
+    }
+
+    .apresentacao,
+    .painel-consulta,
+    .area-exploracao,
+    .modulos-biogeograficos,
+    .importacao-dados {
+        padding: 19px;
+        border-radius: 11px;
+    }
+
+    .busca-especies {
+        grid-template-columns: 1fr;
+    }
+
+    .busca-especies button {
+        width: 100%;
+    }
+
+    .indicadores {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .cartao-indicador {
+        min-height: 105px;
+        padding: 15px;
+    }
+
+    .valor-indicador {
+        font-size: 23px;
+    }
+
+    #mapa-especies {
+        height: 450px;
+    }
+
+    .acoes-importacao {
+        flex-direction: column;
+    }
+
+    .importacao-dados button {
+        width: 100%;
+    }
+
+    footer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 25px 18px;
+    }
+
+    .logo-autoria {
+        width: 105px;
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 400px) {
+    .indicadores {
+        grid-template-columns: 1fr;
+    }
+
+    #mapa-especies {
+        height: 400px;
+    }
+}
+
+.simbolo-specieslink {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    border: 2px solid #4b287d;
+    border-radius: 50%;
+    background-color: #9b72cf;
+    vertical-align: middle;
+}
+
+/* ==================================================
+   INDICADORES POR FONTE
+================================================== */
+
+.indicadores-fontes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.painel-fonte {
+    min-width: 0;
+    padding: 22px;
+    background-color: var(--fundo-cartao);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    box-shadow: var(--sombra);
+}
+
+.painel-fonte h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px;
+    color: var(--texto-principal);
+    font-size: 18px;
+}
+
+.painel-gbif {
+    border-top: 4px solid var(--laranja-gbif);
+}
+
+.painel-specieslink {
+    border-top: 4px solid #7d4ca5;
+}
+
+.painel-usuario {
+    border-top: 4px solid var(--azul-dados);
+}
+
+.grade-indicadores {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.grade-indicadores > div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.grade-indicadores .valor-indicador {
+    margin-bottom: 4px;
+    color: var(--verde-principal);
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.grade-indicadores .nome-indicador {
+    color: var(--texto-secundario);
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+
+/* ==================================================
+   RESPONSIVIDADE DOS INDICADORES
+================================================== */
+
+@media (max-width: 1000px) {
+    .indicadores-fontes {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .grade-indicadores {
+        grid-template-columns: 1fr;
+    }
+
+    .grade-indicadores > div {
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--borda);
+    }
+
+    .grade-indicadores > div:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+}
+
+/* Organização dos controles de camadas do mapa */
+
+.controle-dados,
+.controle-referencia {
+    width: 210px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+.controle-dados {
+    margin-bottom: 10px !important;
+}
+
+.controle-dados::before,
+.controle-referencia::before {
+    display: block;
+    margin-bottom: 5px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #dddddd;
+    color: #2f5f55;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.controle-dados label,
+.controle-referencia label {
+    margin: 2px 0;
+    line-height: 1.25;
+}
+
+/* =====================================================
+   PAINEL DE RELEVO E ALTITUDE
+   ===================================================== */
+
+.painel-relevo {
+    width: 280px;
+    padding: 12px 14px;
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 1px solid #b8b8b8;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28);
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333333;
+}
+
+.painel-relevo-titulo {
+    margin-bottom: 9px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.painel-relevo-opcao {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.painel-relevo-opcao input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.legenda-relevo {
+    display: none;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #dddddd;
+}
+
+.legenda-relevo.visivel {
+    display: block;
+}
+
+.barra-relevo {
+    width: 100%;
+    height: 18px;
+    border: 1px solid #777777;
+    border-radius: 3px;
+    background: linear-gradient(
+        to right,
+        #d9f0a3 0%,
+        #66bd63 12.5%,
+        #ffe066 25%,
+        #fdae3c 50%,
+        #e53935 75%,
+        #6a1b9a 100%
+    );
+}
+
+.valores-relevo {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 9px;
+    color: #444444;
+}
+
+.valores-relevo span {
+    transform: translateX(-50%);
+}
+
+.valores-relevo span:first-child {
+    transform: none;
+}
+
+.valores-relevo span:last-child {
+    transform: none;
+}
+
+.legenda-relevo-texto {
+    display: block;
+    margin-top: 7px;
+    text-align: center;
+    font-size: 11px;
+    color: #555555;
+}
+
+/* =====================================================
+   EXTRAÇÃO DE ALTITUDE DOS REGISTROS
+   ===================================================== */
+
+.painel-extracao-altitude {
+    margin-top: 24px;
+    padding: 22px;
+    background-color: #f8f6ef;
+    border: 1px solid #d8d1c4;
+    border-left: 5px solid #2f6f68;
+    border-radius: 8px;
+}
+
+.cabecalho-extracao-altitude h3 {
+    margin: 7px 0 6px;
+    color: #234c48;
+    font-size: 20px;
+}
+
+.cabecalho-extracao-altitude p {
+    margin: 0;
+    color: #555555;
+    line-height: 1.5;
+}
+
+.etiqueta-ferramenta {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #dcece7;
+    border-radius: 4px;
+    color: #276158;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.informacoes-extracao {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.informacoes-extracao div {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    background-color: #ffffff;
+    border: 1px solid #e2ddd4;
+    border-radius: 6px;
+}
+
+.informacoes-extracao strong {
+    color: #234c48;
+    font-size: 18px;
+}
+
+.informacoes-extracao span {
+    margin-top: 3px;
+    color: #666666;
+    font-size: 12px;
+}
+
+.acoes-extracao-altitude {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.acoes-extracao-altitude button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2f6f68;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.acoes-extracao-altitude button:hover:not(:disabled) {
+    background-color: #245852;
+}
+
+.acoes-extracao-altitude button:disabled {
+    background-color: #b8b8b8;
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.resultado-extracao-altitude {
+    min-height: 20px;
+    margin: 14px 0 0;
+    color: #555555;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .informacoes-extracao {
+        grid-template-columns: 1fr;
+    }
+
+    .acoes-extracao-altitude {
+        flex-direction: column;
+    }
+
+    .acoes-extracao-altitude button {
+        width: 100%;
+    }
+}
+
+/* =====================================================
+   POSSIBILIDADES DA PLATAFORMA
+   ===================================================== */
+
+.secao-possibilidades {
+    margin: 32px 18px;
+    padding: 32px;
+    background-color: #ffffff;
+    border: 1px solid #d7e2df;
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(17, 72, 67, 0.07);
+}
+
+.cabecalho-possibilidades {
+    margin-bottom: 24px;
+}
+
+.cabecalho-possibilidades span {
+    display: block;
+    margin-bottom: 7px;
+    color: #267068;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+}
+
+.cabecalho-possibilidades h2 {
+    margin: 0;
+    color: #073f43;
+    font-size: 28px;
+}
+
+.grade-possibilidades {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.janela-possibilidade {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    min-height: 82px;
+    padding: 18px;
+    background: linear-gradient(
+        135deg,
+        #f7faf9,
+        #eef6f3
+    );
+    border: 1px solid #d5e5e0;
+    border-radius: 13px;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.janela-possibilidade:hover {
+    transform: translateY(-3px);
+    border-color: #84b8ad;
+    box-shadow: 0 8px 18px rgba(20, 85, 78, 0.1);
+}
+
+.icone-possibilidade {
+    display: flex;
+    flex: 0 0 48px;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: #dceee9;
+    border-radius: 12px;
+    color: #17675f;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.janela-possibilidade h3 {
+    margin: 0 0 5px;
+    color: #073f43;
+    font-size: 18px;
+}
+
+.janela-possibilidade p {
+    margin: 0;
+    color: #5b6b68;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+@media (max-width: 700px) {
+    .secao-possibilidades {
+        margin: 24px 12px;
+        padding: 23px 18px;
+    }
+
+    .grade-possibilidades {
+        grid-template-columns: 1fr;
+    }
+
+    .cabecalho-possibilidades h2 {
+        font-size: 24px;
+    }
+}
+
+    /* =====================================================
+   FILTRO DOS DADOS IMPORTADOS
+   ===================================================== */
+
+.painel-filtro-csv {
+    margin-top: 24px;
+    padding: 24px;
+    background-color: #f7faf9;
+    border: 1px solid #cfdfda;
+    border-radius: 14px;
+}
+
+.painel-filtro-csv[hidden] {
+    display: none;
+}
+
+.cabecalho-filtro-csv h3 {
+    margin: 7px 0;
+    color: #073f43;
+    font-size: 22px;
+}
+
+.cabecalho-filtro-csv p {
+    margin: 0;
+    color: #596a67;
+    line-height: 1.5;
+}
+
+.campos-filtro-csv {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.campo-filtro-csv {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.campo-filtro-csv label {
+    color: #173f3d;
+    font-weight: 700;
+}
+
+.campo-filtro-csv select {
+    width: 100%;
+    padding: 11px 12px;
+    background-color: #ffffff;
+    border: 1px solid #b8ccc7;
+    border-radius: 8px;
+    color: #183f3d;
+    font-size: 15px;
+}
+
+.resumo-filtro-csv {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin: 20px 0 14px;
+    color: #526461;
+}
+
+.resumo-filtro-csv > strong {
+    color: #0c625b;
+    font-size: 25px;
+}
+
+@media (max-width: 700px) {
+    .campos-filtro-csv {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =====================================================
+   SÍMBOLOS DAS FONTES COM O RELEVO ATIVO
+   ===================================================== */
+
+.icone-fonte-registro {
+    background: transparent;
+    border: 0;
+    pointer-events: none;
+}
+
+.icone-fonte-registro .simbolo-fonte {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    pointer-events: none;
+    background: transparent;
+}
+
+/* GBIF: círculo */
+.icone-fonte-registro .simbolo-gbif {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    background: transparent;
+    border: 2px solid #222222;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* speciesLink: losango */
+.icone-fonte-registro .simbolo-specieslink {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    background: transparent;
+    border: 2px solid #222222;
+    border-radius: 0;
+    transform:
+        translate(-50%, -50%)
+        rotate(45deg);
+}
+
+/* Dados próprios: triângulo vazado */
+.icone-fonte-registro .simbolo-dados-proprios {
+    width: auto;
+    height: auto;
+    border: 0;
+    transform: translate(-50%, -56%);
+}
+
+.icone-fonte-registro .simbolo-dados-proprios::before {
+    content: "△";
+    display: block;
+    color: #222222;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* =====================================================
+   LEGENDA DOS FORMATOS COM O RELEVO ATIVO
+   ===================================================== */
+
+.legenda-fontes-relevo {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #dddddd;
+    font-size: 12px;
+}
+
+.legenda-fontes-relevo strong {
+    display: block;
+    margin-bottom: 7px;
+    color: #333333;
+}
+
+.item-fonte-relevo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 22px;
+}
+
+.formato-gbif-relevo,
+.formato-specieslink-relevo {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    flex: 0 0 auto;
+    border: 2px solid #222222;
+    background: transparent;
+}
+
+.formato-gbif-relevo {
+    border-radius: 50%;
+}
+
+.formato-specieslink-relevo {
+    transform: rotate(45deg);
+}
+
+.formato-dados-relevo {
+    display: inline-flex;
+    width: 16px;
+    height: 18px;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: #222222;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.legenda-fontes-relevo small {
+    display: block;
+    margin-top: 6px;
+    color: #666666;
+    line-height: 1.3;
+}
