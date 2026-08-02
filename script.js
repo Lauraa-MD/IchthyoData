@@ -605,7 +605,7 @@ resolution: 256
 // =====================================================
 
 const caminhoRasterElevacao =
-    "dados/relevo/elevacao_neotropicos_otimizada.tif";
+    "./relevo_neotropicos_web_2km.tif";
 
 let imagemElevacao = null;
 
