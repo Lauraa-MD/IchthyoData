@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "Se você utilizar o IchthyoData em pesquisa científica, cite o software conforme indicado abaixo."
+
+title: "IchthyoData: plataforma para exploração integrada de registros de ocorrências de peixes neotropicais"
+
+type: software
+
+authors:
+  - family-names: "Donin"
+    given-names: "Laura Modesti"
+    orcid: "https://orcid.org/0000-0002-9609-6400"
+    affiliation: "Laboratório de Estudos Subterrâneos, Universidade Federal de São Carlos"
+
+version: "0.1.0-beta"
+
+date-released: 2026-08-02
+
+url: "https://lauraa-md.github.io/IchthyoData/"
+
+repository-code: "https://github.com/Lauraa-MD/IchthyoData"
+
+abstract: >-
+  Plataforma em desenvolvimento para consulta, integração e visualização
+  de registros de ocorrências de peixes neotropicais, com ferramentas
+  destinadas à exploração espacial e biogeográfica.
+
+keywords:
+  - ichthyology
+  - Neotropical fishes
+  - biodiversity
+  - biogeography
+  - occurrence records
+  - GBIF
+
+license: MIT
