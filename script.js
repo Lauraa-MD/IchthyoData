@@ -1201,7 +1201,7 @@ const numeroCatalogo =
     registro.catalognumber ||
     "Número não informado";
 
-                                const numeroIndividuos =
+const numeroIndividuos =
     registro.individualcount ??
     "Não informado";
                                 return `
@@ -1217,13 +1217,13 @@ const numeroCatalogo =
                                         ${localidade}
 
                                         <br><strong>Instituição/coleção:</strong>
-                                        ${instituicao}
+${instituicao}
 
-                                        <br><strong>Catálogo:</strong>
-                                        ${numeroCatalogo}
+<br><strong>Catálogo:</strong>
+${numeroCatalogo}
 
-                                        <br><strong>Indivíduos:</strong>
-                                        ${numeroIndividuos}
+<br><strong>Indivíduos:</strong>
+${numeroIndividuos}
                                     </div>
                                 `;
                             })
