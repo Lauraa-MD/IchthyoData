@@ -1192,15 +1192,20 @@ function buscarOcorrenciasGBIF(nomeCientifico) {
                                     registro.country ||
                                     "Localidade não informada";
 
-                                const instituicao =
- registro.institutionCode ||
+const instituicao =
+    registro.institutionCode ||
+    registro["dwc:institutionCode"] ||
     registro.collectionCode ||
+    registro["dwc:collectionCode"] ||
+    registro.acronym ||
     "Instituição/coleção não informada";
 
 const numeroCatalogo =
     registro.catalogNumber ||
-    registro.barcode ||
+    registro["dwc:catalogNumber"] ||
     registro.recordNumber ||
+    registro["dwc:recordNumber"] ||
+    registro.barcode ||
     "Número não informado";
 
                                 const numeroIndividuos =
