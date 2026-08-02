@@ -1193,25 +1193,17 @@ function buscarOcorrenciasGBIF(nomeCientifico) {
                                     "Localidade não informada";
 
 const instituicao =
-    registro.institutionCode ||
-    registro["dwc:institutionCode"] ||
-    registro.collectionCode ||
-    registro["dwc:collectionCode"] ||
-    registro.acronym ||
+    registro.institutioncode ||
+    registro.collectioncode ||
     "Instituição/coleção não informada";
 
 const numeroCatalogo =
-    registro.catalogNumber ||
-    registro["dwc:catalogNumber"] ||
-    registro.recordNumber ||
-    registro["dwc:recordNumber"] ||
-    registro.barcode ||
+    registro.catalognumber ||
     "Número não informado";
 
                                 const numeroIndividuos =
-                                    registro.individualCount ??
-                                    "Não informado";
-
+    registro.individualcount ??
+    "Não informado";
                                 return `
                                     <div class="registro-popup">
                                         <strong>
