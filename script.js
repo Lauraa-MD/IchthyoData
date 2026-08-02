@@ -1224,7 +1224,7 @@ const numeroCatalogo =
                                         <br><strong>Localidade:</strong>
                                         ${localidade}
 
-                                        <br><strong>Instituição:</strong>
+                                        <br><strong>Instituição/coleção:</strong>
                                         ${instituicao}
 
                                         <br><strong>Catálogo:</strong>
@@ -1448,12 +1448,20 @@ camadaSpeciesLink.clearLayers();
                                     "Localidade não informada";
 
                                 const instituicao =
-                                    registro.institutionCode ||
-                                    "Instituição não informada";
+    registro.institutionCode ||
+    registro["dwc:institutionCode"] ||
+    registro.collectionCode ||
+    registro["dwc:collectionCode"] ||
+    registro.acronym ||
+    "Instituição/coleção não informada";
 
-                                const numeroCatalogo =
-                                    registro.catalogNumber ||
-                                    "Número não informado";
+const numeroCatalogo =
+    registro.catalogNumber ||
+    registro["dwc:catalogNumber"] ||
+    registro.recordNumber ||
+    registro["dwc:recordNumber"] ||
+    registro.barcode ||
+    "Número não informado";
 
                                 const numeroIndividuos =
                                     registro.individualCount ??
