@@ -1298,35 +1298,15 @@ atualizarQuadroResultados(nomeCientifico);
 
 function buscarOcorrenciasSpeciesLink(nomeCientifico) {
     const urlSpeciesLink = new URL(
-        "https://specieslink.net/ws/1.0/search"
-    );
+    "https://ichthyodata-specieslink.lauramdonin.workers.dev/"
+);
 
-    urlSpeciesLink.searchParams.set(
-        "apikey",
-        window.CONFIG.speciesLinkApiKey
-    );
+urlSpeciesLink.searchParams.set(
+    "scientificname",
+    nomeCientifico
+);
 
-    urlSpeciesLink.searchParams.set(
-        "scientificName",
-        nomeCientifico
-    );
-
-    urlSpeciesLink.searchParams.set("scope", "a");
-    urlSpeciesLink.searchParams.set("output", "dwc");
-
-    urlSpeciesLink.searchParams.set(
-        "coordinates",
-        "original"
-    );
-
-    urlSpeciesLink.searchParams.set(
-        "bbox",
-        "-90 -57 -30 15"
-    );
-
-    urlSpeciesLink.searchParams.set("limit", "300");
-
-    camadaSpeciesLink.clearLayers();
+camadaSpeciesLink.clearLayers();
 
     fetch(urlSpeciesLink)
         .then(function (resposta) {
