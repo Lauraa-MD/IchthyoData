@@ -249,7 +249,7 @@ const camadaEcorregioes = L.geoJSON(null, {
     }
 });
 
-fetch("dados/ecoregions/ecoregions_feow.geojson")
+fetch("dados/ecoregions/ecorregioes_neotropicais_simplificadas")
     .then(function (resposta) {
         if (!resposta.ok) {
             throw new Error("Não foi possível carregar as ecorregiões.");
