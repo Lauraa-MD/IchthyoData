@@ -1440,24 +1440,17 @@ camadaSpeciesLink.clearLayers();
                                     "Localidade não informada";
 
                                 const instituicao =
-    registro.institutionCode ||
-    registro["dwc:institutionCode"] ||
-    registro.collectionCode ||
-    registro["dwc:collectionCode"] ||
-    registro.acronym ||
+    registro.institutioncode ||
+    registro.collectioncode ||
     "Instituição/coleção não informada";
 
 const numeroCatalogo =
-    registro.catalogNumber ||
-    registro["dwc:catalogNumber"] ||
-    registro.recordNumber ||
-    registro["dwc:recordNumber"] ||
-    registro.barcode ||
+    registro.catalognumber ||
     "Número não informado";
 
-                                const numeroIndividuos =
-                                    registro.individualCount ??
-                                    "Não informado";
+const numeroIndividuos =
+    registro.individualcount ??
+    "Não informado";
 
                                 return `
                                     <div class="registro-popup">
@@ -1471,14 +1464,14 @@ const numeroCatalogo =
                                         <br><strong>Localidade:</strong>
                                         ${localidade}
 
-                                        <br><strong>Instituição:</strong>
-                                        ${instituicao}
+                                        <br><strong>Instituição/coleção:</strong>
+${instituicao}
 
-                                        <br><strong>Catálogo:</strong>
-                                        ${numeroCatalogo}
+<br><strong>Catálogo:</strong>
+${numeroCatalogo}
 
-                                        <br><strong>Indivíduos:</strong>
-                                        ${numeroIndividuos}
+<br><strong>Indivíduos:</strong>
+${numeroIndividuos}
                                     </div>
                                 `;
                             })
