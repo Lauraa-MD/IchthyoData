@@ -1193,12 +1193,15 @@ function buscarOcorrenciasGBIF(nomeCientifico) {
                                     "Localidade não informada";
 
                                 const instituicao =
-                                    registro.institutionCode ||
-                                    "Instituição não informada";
+ registro.institutionCode ||
+    registro.collectionCode ||
+    "Instituição/coleção não informada";
 
-                                const numeroCatalogo =
-                                    registro.catalogNumber ||
-                                    "Número não informado";
+const numeroCatalogo =
+    registro.catalogNumber ||
+    registro.barcode ||
+    registro.recordNumber ||
+    "Número não informado";
 
                                 const numeroIndividuos =
                                     registro.individualCount ??
