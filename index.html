@@ -11,30 +11,10 @@
 
     <meta
         name="description"
-        content="Plataforma para consulta, integração e exploração de dados geográficos."
+        content="Plataforma para consulta, integração e exploração biogeográfica de registros de ocorrência."
     >
 
-    <title>IchthyoData | Exploração de dados de distribuição</title>
-
-    <meta
-    property="og:title"
-    content="IchthyoData | Exploração de dados de distribuição"
->
-
-<meta
-    property="og:description"
-    content="Plataforma para consulta, integração e exploração de registros de ocorrência de peixes neotropicais."
->
-
-<meta
-    property="og:type"
-    content="website"
->
-
-<meta
-    property="og:url"
-    content="https://lauraa-md.github.io/IchthyoData/"
->
+    <title>IchthyoData | Exploração biogeográfica</title>
 
     <link
         rel="stylesheet"
@@ -43,10 +23,7 @@
         crossorigin=""
     >
 
-    <link rel="stylesheet" href="estilo.css">
-
-
-    
+    <link rel="stylesheet" href="css/estilo.css">
 </head>
 
 <body>
@@ -67,10 +44,20 @@
             </div>
 
             <nav aria-label="Navegação principal">
-                <a href="#consulta">Consultar</a>
-                <a href="#mapa">Mapa</a>
-                <a href="#importacao">Importar dados</a>
-            </nav>
+    <a href="#consulta">Consultar</a>
+    <a href="#mapa">Mapa</a>
+    <a href="#importacao">Importar dados</a>
+
+    <button
+        type="button"
+        class="botao-feedback-menu"
+        id="abrir-feedback"
+        aria-haspopup="dialog"
+        aria-controls="janela-feedback"
+    >
+        Enviar feedback
+    </button>
+</nav>
         </div>
     </header>
 
@@ -95,24 +82,42 @@
             </div>
 
             <div class="fontes-disponiveis">
-                <p>
-                    <span class="indicador-fonte indicador-gbif"></span>
-                    <strong>GBIF:</strong> consulta disponível
-                </p>
+    <p>
+        <span
+            class="indicador-fonte indicador-gbif"
+        ></span>
 
+        <strong>GBIF:</strong>
+        consulta disponível
+    </p>
 
-                <p>
-    <span class="indicador-fonte indicador-specieslink"></span>
-    <strong>speciesLink:</strong> consulta disponível
-</p>
+    <p>
+        <span
+            class="indicador-fonte indicador-specieslink"
+        ></span>
 
-<p>
-                    <span class="indicador-fonte indicador-usuario"></span>
-                    <strong>Dados próprios:</strong> importação disponível
-                </p>
+        <strong>speciesLink:</strong>
+        consulta disponível
+    </p>
 
+    <p>
+        <span
+            class="indicador-fonte indicador-fishnet2"
+        ></span>
 
-            </div>
+        <strong>FishNet2:</strong>
+        consulta disponível
+    </p>
+
+    <p>
+        <span
+            class="indicador-fonte indicador-usuario"
+        ></span>
+
+        <strong>Dados próprios:</strong>
+        importação disponível
+    </p>
+</div>
         </section>
 
         <section id="consulta" class="painel-consulta">
@@ -245,7 +250,63 @@
         </div>
     </article>
 
+ </article>
+
+            </div>
+    </article>
+
+    <article class="painel-fonte painel-fishnet2">
+        <h3>
+            <span
+                class="indicador-fonte indicador-fishnet2"
+            ></span>
+            FishNet2
+        </h3>
+
+        <div class="grade-indicadores">
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="fishnet2-encontrados"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Registros encontrados
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="fishnet2-carregados"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Registros carregados
+                </span>
+            </div>
+
+            <div>
+                <span
+                    class="valor-indicador"
+                    id="fishnet2-coordenadas"
+                >—</span>
+
+                <span class="nome-indicador">
+                    Coordenadas únicas
+                </span>
+            </div>
+        </div>
+    </article>
+
+
+
+
+
     <article class="painel-fonte painel-usuario">
+                
+
+  
         <h3>
             <span
                 class="indicador-fonte indicador-usuario"
@@ -556,79 +617,25 @@
     </main>
 
     <footer>
-    <div>
-        <strong>IchthyoData</strong>
-
-        <p>
-            Plataforma de integração e exploração
-            de registros de ocorrências.
-        </p>
-
-        <p>
-            Desenvolvida por Laura Modesti Donin — 2026
-        </p>
-
-        <details class="como-citar">
-            <summary>Como citar o IchthyoData</summary>
+        <div>
+            <strong>IchthyoData</strong>
 
             <p>
-                Donin, L. M. (2026).
-                <em>
-                    IchthyoData: plataforma para exploração integrada
-                    de registros de ocorrências de peixes neotropicais
-                </em>
-                (versão 0.1.0-beta) [software].
-                <a
-                    href="https://github.com/Lauraa-MD/IchthyoData"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Repositório do IchthyoData
-                </a>
+                Plataforma de integração e exploração 
+                de registros de ocorrências.
             </p>
-        </details>
-<nav class="links-rodape" aria-label="Links institucionais do IchthyoData">
-    <a
-        href="https://orcid.org/0000-0002-9609-6400"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        ORCID
-    </a>
 
-    <span aria-hidden="true">·</span>
+            <p>
+                Desenvolvida por Laura Modesti Donin — 2026
+            </p>
+        </div>
 
-    <a
-        href="https://github.com/Lauraa-MD/IchthyoData"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        Repositório GitHub
-    </a>
-
-    <span aria-hidden="true">·</span>
-
-    <a
-        href="https://github.com/Lauraa-MD/IchthyoData/blob/main/LICENSE"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        Licença MIT
-    </a>
-
-    <span aria-hidden="true">·</span>
-
-    <span>IchthyoData v0.1.0-beta</span>
-</nav>
-        
-    </div>
-
-    <img
-        class="logo-autoria"
-        src="imagens/logo-laura-donin.png"
-        alt="Logo de autoria de Laura M. Donin"
-    >
-</footer>
+        <img
+            class="logo-autoria"
+            src="imagens/logo-laura-donin.png"
+            alt="Logo de autoria de Laura M. Donin"
+        >
+    </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -641,7 +648,115 @@
 <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
 
 <script src="js/config.js"></script>
-<script src="script.js"></script>
+<script src="js/script.js"></script>
+
+<div
+    class="modal-feedback"
+    id="janela-feedback"
+    hidden
+>
+    <div
+        class="fundo-modal-feedback"
+        data-fechar-feedback
+    ></div>
+
+    <section
+        class="conteudo-modal-feedback"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-feedback"
+    >
+        <button
+            type="button"
+            class="fechar-modal-feedback"
+            data-fechar-feedback
+            aria-label="Fechar janela de feedback"
+        >
+            ×
+        </button>
+
+        <span class="rotulo-feedback">
+            Versão em teste — 0.1.0-beta
+        </span>
+
+        <h2 id="titulo-feedback">
+            Ajude a testar o IchthyoData
+        </h2>
+
+        <div
+    class="animacao-peixe-feedback"
+    aria-hidden="true"
+>
+    <span class="peixe-feedback">
+    <svg
+        viewBox="0 0 44 28"
+        aria-hidden="true"
+    >
+        <polygon
+            class="cauda-peixe-feedback"
+            points="12,8 1,2 4,14 1,26 12,20"
+        ></polygon>
+
+        <ellipse
+            class="corpo-peixe-feedback"
+            cx="25"
+            cy="14"
+            rx="15"
+            ry="10"
+        ></ellipse>
+
+        <path
+            class="nadadeira-peixe-feedback"
+            d="M20 14 L28 19 L18 20 Z"
+        ></path>
+
+        <circle
+            class="olho-peixe-feedback"
+            cx="34"
+            cy="11"
+            r="1.8"
+        ></circle>
+    </svg>
+</span>
+</div>
+
+        <p>
+            Caso encontre algum erro ou tenha uma sugestão,
+            informe, se possível:
+        </p>
+
+        <ul>
+            <li>a espécie pesquisada;</li>
+            <li>a fonte de dados utilizada;</li>
+            <li>o que você esperava que acontecesse;</li>
+            <li>o que aconteceu;</li>
+            <li>o navegador utilizado;</li>
+            <li>uma captura da tela.</li>
+        </ul>
+
+        <p>
+            Seu feedback ajudará no aprimoramento da
+            plataforma.
+        </p>
+
+        <p class="assinatura-feedback">
+    Espero facilitar o nosso trabalho,<br>
+    <strong>Abraços, Laura</strong>
+</p>
+
+        <a
+            class="botao-enviar-feedback"
+            href="mailto:lauramdonin@gmail.com?subject=Feedback%20sobre%20o%20IchthyoData"
+        >
+            Enviar feedback por e-mail
+        </a>
+
+        <p class="email-feedback">
+            lauramdonin@gmail.com
+        </p>
+    </section>
+</div>
+
 
 </body>
 
