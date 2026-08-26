@@ -1636,49 +1636,70 @@ async function resolverTaxonGBIF(
     const dadosCorrespondencia =
         await respostaCorrespondencia.json();
 
+    const uso =
+        dadosCorrespondencia.usage;
+
+    const tipoCorrespondencia =
+        dadosCorrespondencia
+            .diagnostics
+            ?.matchType ||
+        "DESCONHECIDA";
+
+    const nomeBuscado =
+        nomeCientifico
+            .trim()
+            .toLowerCase();
+
+    const nomeLocalizado =
+        (
+            uso?.canonicalName ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+    // Impede que o GBIF transforme uma espécie
+    // não encontrada em uma busca pelo gênero.
     if (
-        !dadosCorrespondencia.usage ||
-        !dadosCorrespondencia.usage.key
+        !uso ||
+        !uso.key ||
+        tipoCorrespondencia !== "EXACT" ||
+        nomeLocalizado !== nomeBuscado
     ) {
         return null;
     }
 
     return {
-        chaveTaxon:
-            dadosCorrespondencia.usage.key,
+        chaveTaxon: uso.key,
 
         nomeAceito:
-            dadosCorrespondencia
-                .usage
-                .canonicalName ||
+            uso.canonicalName ||
             nomeCientifico,
 
         tipoCorrespondencia:
-            dadosCorrespondencia
-                .diagnostics
-                ?.matchType ||
-            "DESCONHECIDA"
+            tipoCorrespondencia
     };
 }
-
 function aplicarFiltroTaxonomicoGBIF(
     url,
     nomeCientifico,
-    taxonGBIF
+    taxonGBIF = null
 ) {
     if (
         taxonGBIF &&
         taxonGBIF.chaveTaxon
     ) {
         url.searchParams.set(
-            "taxon_key",
-            taxonGBIF.chaveTaxon
+            "taxonKey",
+            String(taxonGBIF.chaveTaxon)
         );
 
-        url.searchParams.set(
-            "checklist_key",
-            chaveChecklistGBIF
-        );
+        if (chaveChecklistGBIF) {
+            url.searchParams.set(
+                "checklistKey",
+                chaveChecklistGBIF
+            );
+        }
 
         return;
     }
@@ -1686,7 +1707,7 @@ function aplicarFiltroTaxonomicoGBIF(
     // Mantém uma alternativa caso o nome não seja
     // localizado na classificação atual.
     url.searchParams.set(
-        "scientific_name",
+        "scientificName",
         nomeCientifico
     );
 }
@@ -1706,7 +1727,7 @@ function criarURLGBIFTotal(
     );
 
     url.searchParams.set(
-    "basis_of_record",
+    "basisOfRecord",
     "PRESERVED_SPECIMEN"
 );
 
@@ -1716,7 +1737,7 @@ function criarURLGBIFTotal(
 }
 
 function criarURLGBIFMapa(
-    nomeCientifico,
+    scientificName,
     offset = 0,
     limite = 300,
     taxonGBIF = null
@@ -1726,27 +1747,33 @@ function criarURLGBIFMapa(
     );
 
     aplicarFiltroTaxonomicoGBIF(
-    url,
-    nomeCientifico,
-    taxonGBIF
-);
+        url,
+        scientificName,
+        taxonGBIF
+    );
 
-url.searchParams.set(
-    "basis_of_record",
-    "PRESERVED_SPECIMEN"
-);
     url.searchParams.set(
-        "has_coordinate",
+        "basisOfRecord",
+        "PRESERVED_SPECIMEN"
+    );
+
+    url.searchParams.set(
+        "continent",
+        "SOUTH_AMERICA"
+    );
+
+    url.searchParams.set(
+        "hasCoordinate",
         "true"
     );
 
     url.searchParams.set(
-        "has_geospatial_issue",
+        "hasGeospatialIssue",
         "false"
     );
 
     url.searchParams.set(
-        "occurrence_status",
+        "occurrenceStatus",
         "PRESENT"
     );
 
@@ -1760,7 +1787,7 @@ url.searchParams.set(
         String(offset)
     );
 
-    return url;
+    return url.toString();
 }
 
 async function obterJSONGBIF(url) {
