@@ -1726,9 +1726,19 @@ function criarURLGBIFTotal(
         taxonGBIF
     );
 
-    url.searchParams.set(
+   url.searchParams.set(
     "basisOfRecord",
     "PRESERVED_SPECIMEN"
+);
+
+url.searchParams.append(
+    "basisOfRecord",
+    "MATERIAL_CITATION"
+);
+
+url.searchParams.append(
+    "basisOfRecord",
+    "MATERIAL_CITATION"
 );
 
     url.searchParams.set("limit", "0");
@@ -1753,9 +1763,14 @@ function criarURLGBIFMapa(
     );
 
     url.searchParams.set(
-        "basisOfRecord",
-        "PRESERVED_SPECIMEN"
-    );
+    "basisOfRecord",
+    "PRESERVED_SPECIMEN"
+);
+
+url.searchParams.append(
+    "basisOfRecord",
+    "MATERIAL_CITATION"
+);
 
     url.searchParams.set(
         "continent",
