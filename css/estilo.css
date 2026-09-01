@@ -11,6 +11,7 @@
     --azul-dados: #3378b8;
     --laranja-gbif: #f28c28;
     --roxo-specieslink: #8064a2;
+    --verde-plazi: #00897b;
 
     --fundo-pagina: #f3f5f2;
     --fundo-cartao: #ffffff;
@@ -222,6 +223,10 @@ main {
 
 .indicador-fishnet2 {
     background-color: #e53935;
+}
+
+.indicador-plazi {
+    background-color: var(--verde-plazi);
 }
 .fonte-futura {
     color: #7c8783;
@@ -755,6 +760,30 @@ footer p {
 
 .painel-fishnet2 {
     border-top: 4px solid #e53935;
+}
+
+.painel-plazi {
+    border-top: 4px solid var(--verde-plazi);
+}
+
+.descricao-fonte-literatura {
+    min-height: 42px;
+    margin: -10px 0 17px;
+    color: var(--texto-secundario);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.aviso-plazi-sem-material {
+    display: inline-block;
+    max-width: 620px;
+    margin: 8px 0;
+    padding: 8px 10px;
+    color: #35534f;
+    background-color: #e8f4f2;
+    border-left: 3px solid var(--verde-plazi);
+    border-radius: 4px;
+    line-height: 1.45;
 }
 
 
@@ -1492,6 +1521,26 @@ label > span {
     background-color: transparent;
     border: 2px solid #26352f;
     border-radius: 2px;
+}
+
+/* Plazi: hexágono com contorno padrão */
+
+.formato-plazi-relevo {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    background-color: transparent;
+    border: 2px solid #26352f;
+    clip-path: polygon(
+        25% 7%,
+        75% 7%,
+        100% 50%,
+        75% 93%,
+        25% 93%,
+        0 50%
+    );
 }
 
 /* =====================================================

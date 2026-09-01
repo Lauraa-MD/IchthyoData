@@ -48,6 +48,18 @@ const fishNet2Coordenadas = document.querySelector(
     "#fishnet2-coordenadas"
 );
 
+const plaziTratamentos = document.querySelector(
+    "#plazi-tratamentos"
+);
+
+const plaziMateriais = document.querySelector(
+    "#plazi-materiais"
+);
+
+const plaziMapeaveis = document.querySelector(
+    "#plazi-mapeaveis"
+);
+
 const dadosRegistros = document.querySelector(
     "#dados-registros"
 );
@@ -116,6 +128,29 @@ function atualizarIndicadoresFishNet2(
         Number(coordenadas).toLocaleString("pt-BR");
 }
 
+function atualizarIndicadoresPlazi(
+    tratamentos,
+    materiais,
+    mapeaveis
+) {
+    function formatar(valor) {
+        return valor === null ||
+            valor === undefined ||
+            !Number.isFinite(Number(valor))
+            ? "—"
+            : Number(valor).toLocaleString("pt-BR");
+    }
+
+    plaziTratamentos.textContent =
+        formatar(tratamentos);
+
+    plaziMateriais.textContent =
+        formatar(materiais);
+
+    plaziMapeaveis.textContent =
+        formatar(mapeaveis);
+}
+
 function atualizarIndicadoresDadosProprios(
     registros,
     especies,
@@ -149,6 +184,10 @@ function indicarCarregamento() {
     fishNet2Encontrados.textContent = "…";
 fishNet2Carregados.textContent = "…";
 fishNet2Coordenadas.textContent = "…";
+
+    plaziTratamentos.textContent = "…";
+    plaziMateriais.textContent = "…";
+    plaziMapeaveis.textContent = "…";
 }
 
 // INÍCIO DO MAPA
@@ -170,6 +209,7 @@ const camadaProjeto = L.featureGroup().addTo(mapaEspecies);
 const camadaGBIF = L.featureGroup().addTo(mapaEspecies);
 const camadaSpeciesLink = L.featureGroup().addTo(mapaEspecies);
 const camadaFishNet2 = L.featureGroup().addTo(mapaEspecies);
+const camadaPlazi = L.featureGroup().addTo(mapaEspecies);
 const camadaDadosUsuario = L.featureGroup().addTo(mapaEspecies);
 
 // CAMADA DAS BACIAS HIDROGRÁFICAS
@@ -423,6 +463,7 @@ const tiposDados = {
     "Registros GBIF": camadaGBIF,
     "Registros SpeciesLink": camadaSpeciesLink,
     "Registros FishNet2": camadaFishNet2,
+    "Plazi — literatura": camadaPlazi,
     "Dados importados": camadaDadosUsuario
 };
 
@@ -536,6 +577,11 @@ painelRelevo.onAdd = function () {
 
     <span>FishNet2</span>
 </div>
+
+    <div class="item-fonte-relevo">
+        <span class="formato-plazi-relevo"></span>
+        <span>Plazi — literatura</span>
+    </div>
 
     <div class="item-fonte-relevo">
         <span class="formato-specieslink-relevo"></span>
@@ -912,6 +958,11 @@ const estilosPorFonte = {
     fillColor: "#e53935"
     },
 
+    plazi: {
+        color: "#005f56",
+        fillColor: "#00897b"
+    },
+
     dadosProprios: {
         color: "#174f78",
         fillColor: "#3b8fc2"
@@ -981,6 +1032,19 @@ function criarIconeFonte(
                 width="14"
                 height="14"
                 rx="1.5"
+            />
+        `,
+
+        plazi: `
+            <polygon
+                points="
+                    5,2
+                    13,2
+                    17,9
+                    13,16
+                    5,16
+                    1,9
+                "
             />
         `,
 
@@ -1072,6 +1136,7 @@ function atualizarSimbolosAoAlterarCamada(
         camadaGBIF,
         camadaSpeciesLink,
         camadaFishNet2,
+        camadaPlazi,
         camadaDadosUsuario
     ];
 
@@ -1107,6 +1172,10 @@ mapaEspecies.on(
         {
             camada: camadaFishNet2,
             fonte: "fishNet2"
+        },
+        {
+            camada: camadaPlazi,
+            fonte: "plazi"
         },
         {
             camada: camadaDadosUsuario,
@@ -1225,6 +1294,10 @@ async function atualizarCoresDosRegistros() {
             fonte: "fishNet2"
         },
         {
+            camada: camadaPlazi,
+            fonte: "plazi"
+        },
+        {
             camada: camadaDadosUsuario,
             fonte: "dadosProprios"
         }
@@ -1318,6 +1391,7 @@ function atualizarSimbolosAoAlterarCamada(
         camadaGBIF,
         camadaSpeciesLink,
         camadaFishNet2,
+        camadaPlazi,
         camadaDadosUsuario
     ];
 
@@ -1347,7 +1421,8 @@ mapaEspecies.on(
 const resultadosBancos = {
     gbif: null,
     speciesLink: null,
-    fishNet2: null
+    fishNet2: null,
+    plazi: null
 };
 
 function formatarQuantidade(valor) {
@@ -1418,6 +1493,105 @@ function montarResumoFonte(
     `;
 }
 
+function montarResumoPlazi(dados) {
+    const titulo = "Plazi — literatura";
+
+    if (!dados) {
+        return `
+            <strong>${titulo}</strong><br>
+            Consultando...<br><br>
+        `;
+    }
+
+    if (dados.erro) {
+        return `
+            <strong>${titulo}</strong><br>
+            Fonte temporariamente indisponível.<br><br>
+        `;
+    }
+
+    const linkTratamentos = criarLinkPlazi(
+        dados.urlTratamentos,
+        "Ver tratamentos no Plazi"
+    );
+
+    if (dados.materiaisDisponiveis === false) {
+        return `
+            <strong>${titulo}</strong><br>
+
+            ${formatarQuantidade(dados.tratamentos)}
+            tratamentos encontrados na literatura<br>
+
+            Citações de material temporariamente
+            indisponíveis<br>
+
+            Registros com coordenadas temporariamente
+            indisponíveis<br>
+
+            <span class="aviso-plazi-sem-material">
+                O Plazi confirmou a literatura, mas seu
+                serviço de dados de espécimes não respondeu.
+                Tente novamente mais tarde.
+            </span><br>
+
+            ${linkTratamentos ? `${linkTratamentos}<br>` : ""}
+
+            <br>
+        `;
+    }
+
+    const botaoCarregarTodos =
+        dados.temMais === true
+            ? `
+                <button
+                    type="button"
+                    class="botao-carregar-todos"
+                    data-fonte="plazi"
+                >
+                    Carregar todas as citações
+                </button>
+                <br>
+            `
+            : "";
+
+    const avisoSemMaterial =
+        dados.tratamentos > 0 &&
+        dados.materiais === 0
+            ? `
+                <span class="aviso-plazi-sem-material">
+                    Há literatura no Plazi, mas nenhuma
+                    citação de material foi estruturada para
+                    este nome. Por isso não há pontos para o
+                    mapa.
+                </span><br>
+            `
+            : "";
+
+    return `
+        <strong>${titulo}</strong><br>
+
+        ${formatarQuantidade(dados.tratamentos)}
+        tratamentos encontrados na literatura<br>
+
+        ${formatarQuantidade(dados.materiais)}
+        citações de material estruturadas<br>
+
+        ${formatarQuantidade(dados.carregados)}
+        registros com coordenadas para o mapa<br>
+
+        ${formatarQuantidade(dados.coordenadas)}
+        coordenadas únicas<br>
+
+        ${avisoSemMaterial}
+
+        ${linkTratamentos ? `${linkTratamentos}<br>` : ""}
+
+        ${botaoCarregarTodos}
+
+        <br>
+    `;
+}
+
 function atualizarQuadroResultados(nomeCientifico) {
     let conteudo = `
         <strong>Consulta concluída</strong><br>
@@ -1441,6 +1615,12 @@ exemplares preservados em coleções científicas
 (PRESERVED_SPECIMEN). Também são excluídos registros
 com problemas geoespaciais e ocorrências que não estejam
 classificadas como presentes.
+
+No Plazi, “tratamentos” indicam a presença do nome em
+publicações taxonômicas. Apenas as citações de material
+estruturadas e com coordenadas válidas podem ser
+representadas no mapa. Por isso, uma espécie pode possuir
+literatura no Plazi sem apresentar pontos geográficos.
 
     Inicialmente, são carregados até 300 registros elegíveis
     por fonte. Quando houver resultados adicionais, é
@@ -1467,6 +1647,10 @@ classificadas como presentes.
         "FishNet2",
         "fishNet2",
         resultadosBancos.fishNet2
+    );
+
+    conteudo += montarResumoPlazi(
+        resultadosBancos.plazi
     );
 
     resultadoBusca.innerHTML = conteudo;
@@ -1510,7 +1694,8 @@ if (totalPrevisto > 5000) {
     const nomesFontes = {
         gbif: "GBIF",
         speciesLink: "speciesLink",
-        fishNet2: "FishNet2"
+        fishNet2: "FishNet2",
+        plazi: "Plazi — literatura"
     };
 
     const confirmado = window.confirm(
@@ -1547,6 +1732,12 @@ if (totalPrevisto > 5000) {
 
         if (fonte === "fishNet2") {
             await carregarTodosFishNet2(
+                nomeCientifico
+            );
+        }
+
+        if (fonte === "plazi") {
+            await carregarTodosPlazi(
                 nomeCientifico
             );
         }
@@ -1587,12 +1778,14 @@ formularioBusca.addEventListener(
         resultadosBancos.gbif = null;
 resultadosBancos.speciesLink = null;
 resultadosBancos.fishNet2 = null;
+resultadosBancos.plazi = null;
 
 atualizarQuadroResultados(nomeCientifico);
 
 buscarOcorrenciasGBIF(nomeCientifico);
 buscarOcorrenciasSpeciesLink(nomeCientifico);
 buscarOcorrenciasFishNet2(nomeCientifico);
+buscarOcorrenciasPlazi(nomeCientifico);
     }
 );
 
@@ -1795,6 +1988,14 @@ url.searchParams.append(
     url.searchParams.set(
         "limit",
         String(limite)
+    );
+
+    // Evita que o navegador reutilize respostas da versão
+    // anterior do Worker, que não possuíam a contagem de
+    // tratamentos.
+    url.searchParams.set(
+        "responseVersion",
+        "3"
     );
 
     url.searchParams.set(
@@ -3422,6 +3623,592 @@ async function carregarTodosFishNet2(
 }
 
 // FIM DA BUSCA NO FISHNET2
+
+
+// =====================================================
+// BUSCA DIRETA NO PLAZI TREATMENTBANK
+// =====================================================
+
+let estadoPlazi = {
+    nomeCientifico: "",
+    totalTratamentos: 0,
+    totalMateriais: 0,
+    materiaisDisponiveis: true,
+    urlTratamentos: "",
+    registros: []
+};
+
+function separarNomePlazi(nomeCientifico) {
+    const partes = String(nomeCientifico || "")
+        .trim()
+        .split(/\s+/);
+
+    if (partes.length < 2) {
+        throw new Error(
+            "O Plazi requer um nome binomial completo."
+        );
+    }
+
+    return {
+        genero: partes[0],
+        especie: partes[1]
+    };
+}
+
+function escaparHTMLPlazi(valor) {
+    return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function obterURLSeguraPlazi(valor) {
+    if (!valor) {
+        return null;
+    }
+
+    try {
+        const url = new URL(String(valor));
+
+        return ["http:", "https:"].includes(
+            url.protocol
+        )
+            ? url.toString()
+            : null;
+    } catch (erro) {
+        return null;
+    }
+}
+
+function criarLinkPlazi(url, rotulo) {
+    const urlSegura = obterURLSeguraPlazi(url);
+
+    if (!urlSegura) {
+        return "";
+    }
+
+    return `
+        <a
+            href="${escaparHTMLPlazi(urlSegura)}"
+            target="_blank"
+            rel="noopener noreferrer"
+        >${escaparHTMLPlazi(rotulo)}</a>
+    `;
+}
+
+async function obterDadosPlazi(
+    nomeCientifico,
+    limite = 300
+) {
+    const nomes =
+        separarNomePlazi(nomeCientifico);
+
+    const enderecoProxy =
+        window.CONFIG?.plaziProxyUrl;
+
+    if (!enderecoProxy) {
+        throw new Error(
+            "Endereço do serviço Plazi não configurado."
+        );
+    }
+
+    const url = new URL(enderecoProxy);
+
+    url.searchParams.set(
+        "genus",
+        nomes.genero
+    );
+
+    url.searchParams.set(
+        "species",
+        nomes.especie
+    );
+
+    url.searchParams.set(
+        "limit",
+        String(limite)
+    );
+
+    const controlador = new AbortController();
+    const temporizador = setTimeout(
+        function () {
+            controlador.abort();
+        },
+        90000
+    );
+
+    try {
+        const resposta = await fetch(
+            url,
+            {
+                signal: controlador.signal,
+                cache: "no-store",
+                headers: {
+                    Accept: "application/json"
+                }
+            }
+        );
+
+        if (!resposta.ok) {
+            throw new Error(
+                `Consulta Plazi: HTTP ${resposta.status}`
+            );
+        }
+
+        return await resposta.json();
+    } finally {
+        clearTimeout(temporizador);
+    }
+}
+
+function desenharRegistrosPlazi(
+    nomeCientifico,
+    registros
+) {
+    camadaPlazi.clearLayers();
+
+    const registrosPorCoordenada =
+        new Map();
+
+    let registrosCarregados = 0;
+
+    registros.forEach(function (registro) {
+        const latitude = Number(
+            registro.MatCitLatitude
+        );
+
+        const longitude = Number(
+            registro.MatCitLongitude
+        );
+
+        if (
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude) ||
+            latitude < -57 ||
+            latitude > 15 ||
+            longitude < -90 ||
+            longitude > -30
+        ) {
+            return;
+        }
+
+        registrosCarregados++;
+
+        const chaveCoordenada =
+            latitude.toFixed(6) +
+            "," +
+            longitude.toFixed(6);
+
+        if (
+            !registrosPorCoordenada.has(
+                chaveCoordenada
+            )
+        ) {
+            registrosPorCoordenada.set(
+                chaveCoordenada,
+                {
+                    latitude: latitude,
+                    longitude: longitude,
+                    registros: []
+                }
+            );
+        }
+
+        registrosPorCoordenada
+            .get(chaveCoordenada)
+            .registros
+            .push(registro);
+    });
+
+    registrosPorCoordenada.forEach(
+        function (grupo) {
+            const marcadorPlazi =
+                L.circleMarker(
+                    [
+                        grupo.latitude,
+                        grupo.longitude
+                    ],
+                    {
+                        radius: 7,
+                        color: "#005f56",
+                        weight: 2,
+                        fillColor: "#00897b",
+                        fillOpacity: 0.88
+                    }
+                ).addTo(camadaPlazi);
+
+            marcadorPlazi.options
+                .fonteRegistro = "plazi";
+
+            const listaRegistros =
+                grupo.registros
+                    .map(function (
+                        registro,
+                        indice
+                    ) {
+                        const identificacao =
+                            registro.TaxName ||
+                            nomeCientifico;
+
+                        const localidade = [
+                            registro.MatCitLocation,
+                            registro.MatCitMunicipality,
+                            registro.MatCitRegion,
+                            registro.MatCitCountry
+                        ]
+                            .filter(Boolean)
+                            .join(", ") ||
+                            "Localidade não informada";
+
+                        const colecao =
+                            registro.MatCitCollectionCode ||
+                            "Coleção não informada";
+
+                        const catalogo =
+                            registro.MatCitSpecimenCode ||
+                            "Número não informado";
+
+                        const tipo =
+                            registro.MatCitTypeStatus ||
+                            "Não informado";
+
+                        const citacaoMaterial =
+                            registro.MatCitVerbatimMatCit ||
+                            "Citação não informada";
+
+                        const referencia =
+                            registro.BibDspRefDsp ||
+                            registro.BibTitle ||
+                            "Referência não informada";
+
+                        const tratamento =
+                            criarLinkPlazi(
+                                registro.LnkHttpUri,
+                                "Ver tratamento no Plazi"
+                            );
+
+                        const doiBruto =
+                            String(
+                                registro.PubLnkArticleDoi ||
+                                ""
+                            ).replace(
+                                /^https?:\/\/(dx\.)?doi\.org\//i,
+                                ""
+                            );
+
+                        const linkDoi = doiBruto
+                            ? criarLinkPlazi(
+                                `https://doi.org/${doiBruto}`,
+                                "Abrir artigo pelo DOI"
+                            )
+                            : "";
+
+                        const links = [
+                            tratamento,
+                            linkDoi
+                        ]
+                            .filter(Boolean)
+                            .join("<br>");
+
+                        return `
+                            <div class="registro-popup registro-popup-plazi">
+                                <strong>
+                                    Registro ${indice + 1}
+                                </strong>
+
+                                <br>
+                                <strong>Identificação:</strong>
+                                <em>${escaparHTMLPlazi(identificacao)}</em>
+
+                                <br>
+                                <strong>Status do material:</strong>
+                                ${escaparHTMLPlazi(tipo)}
+
+                                <br>
+                                <strong>Localidade:</strong>
+                                ${escaparHTMLPlazi(localidade)}
+
+                                <br>
+                                <strong>Coleção:</strong>
+                                ${escaparHTMLPlazi(colecao)}
+
+                                <br>
+                                <strong>Catálogo:</strong>
+                                ${escaparHTMLPlazi(catalogo)}
+
+                                <br>
+                                <strong>Citação do material:</strong>
+                                ${escaparHTMLPlazi(citacaoMaterial)}
+
+                                <br>
+                                <strong>Referência:</strong>
+                                ${escaparHTMLPlazi(referencia)}
+
+                                ${links ? `<br>${links}` : ""}
+                            </div>
+                        `;
+                    })
+                    .join("<hr>");
+
+            vincularPopupOcorrencia(
+                marcadorPlazi,
+                `
+                    <strong>
+                        Registros do Plazi — literatura
+                    </strong>
+
+                    <br>
+                    <em>${escaparHTMLPlazi(nomeCientifico)}</em>
+
+                    <br>
+                    <strong>
+                        Registros neste ponto:
+                    </strong>
+
+                    ${grupo.registros.length}
+
+                    <hr>
+
+                    ${listaRegistros}
+                `
+            );
+        }
+    );
+
+    if (
+        !mapaEspecies.hasLayer(camadaPlazi)
+    ) {
+        camadaPlazi.addTo(mapaEspecies);
+    }
+
+    return {
+        carregados: registrosCarregados,
+        coordenadas:
+            registrosPorCoordenada.size
+    };
+}
+
+function atualizarResultadoPlazi(
+    nomeCientifico,
+    resumoMapa
+) {
+    const todosRecebidos =
+        estadoPlazi.materiaisDisponiveis &&
+        estadoPlazi.registros.length >=
+            estadoPlazi.totalMateriais;
+
+    resultadosBancos.plazi = {
+        tratamentos:
+            estadoPlazi.totalTratamentos,
+
+        materiais:
+            estadoPlazi.totalMateriais,
+
+        materiaisDisponiveis:
+            estadoPlazi.materiaisDisponiveis,
+
+        encontrados:
+            estadoPlazi.totalMateriais,
+
+        urlTratamentos:
+            estadoPlazi.urlTratamentos,
+
+        disponiveisMapa:
+            estadoPlazi.materiaisDisponiveis &&
+            todosRecebidos
+                ? resumoMapa.carregados
+                : null,
+
+        carregados:
+            estadoPlazi.materiaisDisponiveis
+                ? resumoMapa.carregados
+                : null,
+
+        coordenadas:
+            estadoPlazi.materiaisDisponiveis
+                ? resumoMapa.coordenadas
+                : null,
+
+        temMais:
+            estadoPlazi.materiaisDisponiveis &&
+            !todosRecebidos
+    };
+
+    atualizarIndicadoresPlazi(
+        resultadosBancos.plazi.tratamentos,
+        resultadosBancos.plazi.materiais,
+        resultadosBancos.plazi.carregados
+    );
+
+    atualizarQuadroResultados(
+        nomeCientifico
+    );
+}
+
+async function buscarOcorrenciasPlazi(
+    nomeCientifico
+) {
+    camadaPlazi.clearLayers();
+
+    estadoPlazi = {
+        nomeCientifico: nomeCientifico,
+        totalTratamentos: 0,
+        totalMateriais: 0,
+        materiaisDisponiveis: true,
+        urlTratamentos: "",
+        registros: []
+    };
+
+    try {
+        const nomeDaConsulta =
+            nomeCientifico;
+
+        const dados =
+            await obterDadosPlazi(
+                nomeCientifico,
+                300
+            );
+
+        if (
+            estadoPlazi.nomeCientifico !==
+            nomeDaConsulta
+        ) {
+            return;
+        }
+
+        estadoPlazi.totalTratamentos =
+            Number(dados.treatmentsTotal || 0);
+
+        estadoPlazi.materiaisDisponiveis =
+            dados.materialsAvailable !== false;
+
+        estadoPlazi.totalMateriais =
+            estadoPlazi.materiaisDisponiveis
+                ? Number(
+                    dados.materialCitationsTotal ??
+                    dados.total ??
+                    0
+                )
+                : null;
+
+        estadoPlazi.urlTratamentos =
+            String(dados.treatmentsUrl || "");
+
+        estadoPlazi.registros =
+            Array.isArray(dados.records)
+                ? dados.records
+                : [];
+
+        const resumoMapa =
+            desenharRegistrosPlazi(
+                nomeCientifico,
+                estadoPlazi.registros
+            );
+
+        atualizarResultadoPlazi(
+            nomeCientifico,
+            resumoMapa
+        );
+
+        try {
+            await atualizarCoresDosRegistros();
+        } catch (erroVisual) {
+            console.error(
+                "Erro ao atualizar a aparência dos registros:",
+                erroVisual
+            );
+        }
+
+        console.log(
+            "Plazi:",
+            resultadosBancos.plazi
+        );
+    } catch (erro) {
+        resultadosBancos.plazi = {
+            erro: true,
+            tratamentos: 0,
+            materiais: 0,
+            materiaisDisponiveis: false,
+            encontrados: 0,
+            disponiveisMapa: 0,
+            carregados: 0,
+            coordenadas: 0,
+            temMais: false
+        };
+
+        atualizarIndicadoresPlazi(0, 0, 0);
+
+        atualizarQuadroResultados(
+            nomeCientifico
+        );
+
+        console.error(
+            "Erro na consulta ao Plazi:",
+            erro
+        );
+    }
+}
+
+async function carregarTodosPlazi(
+    nomeCientifico
+) {
+    if (
+        estadoPlazi.nomeCientifico !==
+        nomeCientifico
+    ) {
+        throw new Error(
+            "A pesquisa atual do Plazi mudou."
+        );
+    }
+
+    const dados = await obterDadosPlazi(
+        nomeCientifico,
+        Math.max(
+            estadoPlazi.totalMateriais,
+            300
+        )
+    );
+
+    estadoPlazi.totalTratamentos =
+        Number(dados.treatmentsTotal || 0);
+
+    estadoPlazi.materiaisDisponiveis =
+        dados.materialsAvailable !== false;
+
+    estadoPlazi.totalMateriais =
+        estadoPlazi.materiaisDisponiveis
+            ? Number(
+                dados.materialCitationsTotal ??
+                dados.total ??
+                0
+            )
+            : null;
+
+    estadoPlazi.urlTratamentos =
+        String(dados.treatmentsUrl || "");
+
+    estadoPlazi.registros =
+        Array.isArray(dados.records)
+            ? dados.records
+            : [];
+
+    const resumoMapa =
+        desenharRegistrosPlazi(
+            nomeCientifico,
+            estadoPlazi.registros
+        );
+
+    atualizarResultadoPlazi(
+        nomeCientifico,
+        resumoMapa
+    );
+
+    await atualizarCoresDosRegistros();
+}
+
+// FIM DA BUSCA NO PLAZI
 
 
 // FIM DA BUSCA GERAL NO GBIF
