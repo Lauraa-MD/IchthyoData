@@ -5585,10 +5585,7 @@ async function criarImagemDoMapa() {
         }
     );
 
-    const rendererExportacao =
-    L.canvas({
-        padding: 0.5
-    });
+    
 
     // =====================================================
     // 4. MAPA BASE
@@ -5605,37 +5602,7 @@ async function criarImagemDoMapa() {
             }
         ).addTo(mapaExportacao);
 
-        pontos.forEach(function (ponto) {
-
-    L.circleMarker(
-        [
-            ponto.latitude,
-            ponto.longitude
-        ],
-        {
-            renderer:
-                rendererExportacao,
-
-            radius:
-                ponto.radius,
-
-            color:
-                ponto.color,
-
-            weight:
-                ponto.weight,
-
-            opacity: 1,
-
-            fillColor:
-                ponto.fillColor,
-
-            fillOpacity:
-                ponto.fillOpacity
-        }
-    ).addTo(mapaExportacao);
-
-});
+        
 
     // =====================================================
     // 5. ENQUADRA DISTRIBUIÇÃO
@@ -5712,12 +5679,12 @@ async function criarImagemDoMapa() {
     // 7. CAPTURA APENAS O MAPA BASE
     // =====================================================
 
-   let captura;
+let captura;
 
 try {
 
     // =====================================================
-    // 7. RENDERIZA O MAPA COM LEAFLET-IMAGE
+    // 7. RENDERIZA O MAPA-BASE COM LEAFLET-IMAGE
     // =====================================================
 
     captura = await new Promise(
@@ -5738,6 +5705,58 @@ try {
 
         }
     );
+
+
+    // =====================================================
+    // 8. DESENHA OS PONTOS DIRETAMENTE SOBRE O MAPA
+    // =====================================================
+
+    const contextoMapa =
+        captura.getContext("2d");
+
+    pontos.forEach(function (ponto) {
+
+        const posicao =
+            mapaExportacao.latLngToContainerPoint(
+                [
+                    ponto.latitude,
+                    ponto.longitude
+                ]
+            );
+
+        contextoMapa.save();
+
+        contextoMapa.beginPath();
+
+        contextoMapa.arc(
+            posicao.x,
+            posicao.y,
+            ponto.radius,
+            0,
+            Math.PI * 2
+        );
+
+        contextoMapa.globalAlpha =
+            ponto.fillOpacity;
+
+        contextoMapa.fillStyle =
+            ponto.fillColor;
+
+        contextoMapa.fill();
+
+        contextoMapa.globalAlpha = 1;
+
+        contextoMapa.strokeStyle =
+            ponto.color;
+
+        contextoMapa.lineWidth =
+            ponto.weight;
+
+        contextoMapa.stroke();
+
+        contextoMapa.restore();
+
+    });
 
 } finally {
 
