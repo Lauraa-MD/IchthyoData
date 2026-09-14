@@ -1817,6 +1817,9 @@ if (totalPrevisto > 5000) {
     }
 }
 
+
+
+
 function ajustarMapaAosPontos() {
 
     const limites = L.latLngBounds([]);
@@ -5572,15 +5575,15 @@ async function criarImagemDoMapa() {
     // 3. CRIA MAPA TEMPORÁRIO
     // =====================================================
 
-    const mapaExportacao =
-        L.map(
-            elementoExportacao,
-            {
-                zoomControl: false,
-                attributionControl: false
-            }
-        );
-
+   const mapaExportacao =
+    L.map(
+        elementoExportacao,
+        {
+            zoomControl: false,
+            attributionControl: false,
+            preferCanvas: true
+        }
+    );
 
     // =====================================================
     // 4. MAPA BASE
@@ -5596,6 +5599,24 @@ async function criarImagemDoMapa() {
                 subdomains: "abcd"
             }
         ).addTo(mapaExportacao);
+
+        pontos.forEach(function (ponto) {
+
+    L.circleMarker(
+        [
+            ponto.latitude,
+            ponto.longitude
+        ],
+        {
+            radius: ponto.radius,
+            color: ponto.color,
+            weight: ponto.weight,
+            fillColor: ponto.fillColor,
+            fillOpacity: ponto.fillOpacity
+        }
+    ).addTo(mapaExportacao);
+
+});
 
 
     // =====================================================
@@ -5673,95 +5694,40 @@ async function criarImagemDoMapa() {
     // 7. CAPTURA APENAS O MAPA BASE
     // =====================================================
 
-    let captura;
+   let captura;
 
-    try {
+try {
 
-        captura = await html2canvas(
-            elementoExportacao,
-            {
-                backgroundColor:
-                    "#ffffff",
+    // =====================================================
+    // 7. RENDERIZA O MAPA COM LEAFLET-IMAGE
+    // =====================================================
 
-                scale: 2,
+    captura = await new Promise(
+        function (resolver, rejeitar) {
 
-                useCORS: true,
+            leafletImage(
+                mapaExportacao,
+                function (erro, canvas) {
 
-                allowTaint: false,
+                    if (erro) {
+                        rejeitar(erro);
+                        return;
+                    }
 
-                logging: false
-            }
-        );
-
-
-        // =================================================
-        // 8. DESENHA OS PONTOS DIRETAMENTE NO CANVAS
-        // =================================================
-
-        const contextoMapa =
-            captura.getContext("2d");
-
-        const escalaCaptura = 2;
-
-        pontos.forEach(function (ponto) {
-
-            const posicao =
-                mapaExportacao
-                    .latLngToContainerPoint([
-                        ponto.latitude,
-                        ponto.longitude
-                    ]);
-
-            const x =
-                posicao.x *
-                escalaCaptura;
-
-            const y =
-                posicao.y *
-                escalaCaptura;
-
-            const raio =
-                ponto.radius *
-                escalaCaptura;
-
-            contextoMapa.beginPath();
-
-            contextoMapa.arc(
-                x,
-                y,
-                raio,
-                0,
-                Math.PI * 2
+                    resolver(canvas);
+                }
             );
 
-            contextoMapa.fillStyle =
-                ponto.fillColor;
+        }
+    );
 
-            contextoMapa.globalAlpha =
-                ponto.fillOpacity;
+} finally {
 
-            contextoMapa.fill();
+    mapaExportacao.remove();
 
-            contextoMapa.globalAlpha = 1;
+    elementoExportacao.remove();
 
-            contextoMapa.strokeStyle =
-                ponto.color;
-
-            contextoMapa.lineWidth =
-                ponto.weight *
-                escalaCaptura;
-
-            contextoMapa.stroke();
-
-        });
-
-    } finally {
-
-        mapaExportacao.remove();
-
-        elementoExportacao.remove();
-
-    }
+}
 
 
     // =====================================================
