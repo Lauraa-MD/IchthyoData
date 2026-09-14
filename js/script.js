@@ -2158,6 +2158,90 @@ function vincularPopupOcorrencia(
     );
 }
 
+function obterPontosParaExportacao() {
+
+    const pontos = [];
+
+    const camadas = [
+        {
+            camada: camadaGBIF,
+            fonte: "GBIF"
+        },
+        {
+            camada: camadaSpeciesLink,
+            fonte: "speciesLink"
+        },
+        {
+            camada: camadaFishNet2,
+            fonte: "FishNet2"
+        },
+        {
+            camada: camadaPlazi,
+            fonte: "Plazi"
+        },
+        {
+            camada: camadaDadosUsuario,
+            fonte: "Dados importados"
+        }
+    ];
+
+    camadas.forEach(function (item) {
+
+        const camada = item.camada;
+
+        if (
+            !camada ||
+            !mapaEspecies.hasLayer(camada)
+        ) {
+            return;
+        }
+
+        camada.eachLayer(function (layer) {
+
+            if (
+                typeof layer.getLatLng !==
+                "function"
+            ) {
+                return;
+            }
+
+            const coordenada =
+                layer.getLatLng();
+
+            pontos.push({
+                latitude:
+                    coordenada.lat,
+
+                longitude:
+                    coordenada.lng,
+
+                fonte:
+                    item.fonte,
+
+                radius:
+                    layer.options.radius || 6,
+
+                color:
+                    layer.options.color || "#333333",
+
+                weight:
+                    layer.options.weight || 1,
+
+                fillColor:
+                    layer.options.fillColor || "#666666",
+
+                fillOpacity:
+                    layer.options.fillOpacity ?? 0.85
+            });
+
+        });
+
+    });
+
+    return pontos;
+
+}
+
 
 function desenharRegistrosGBIF(
     nomeCientifico,
@@ -5427,73 +5511,298 @@ function desenharLegendaExportacao(
 }
 
 async function criarImagemDoMapa() {
+
     if (typeof html2canvas !== "function") {
         throw new Error(
             "O recurso de exportação de imagem não foi carregado."
         );
     }
 
-    const elementoMapa =
-        document.querySelector("#mapa-especies");
+    // =====================================================
+    // 1. OBTÉM OS PONTOS VISÍVEIS
+    // =====================================================
 
-    const centroAnterior = mapaEspecies.getCenter();
-    const zoomAnterior = mapaEspecies.getZoom();
+    const pontos =
+        obterPontosParaExportacao();
 
-    mapaEspecies.fitBounds(
-        limitesAmericaDoSul,
-        {
-            padding: [30, 30],
-            animate: false
-        }
+    const limitesPontos =
+        L.latLngBounds([]);
+
+    pontos.forEach(function (ponto) {
+
+        limitesPontos.extend([
+            ponto.latitude,
+            ponto.longitude
+        ]);
+
+    });
+
+
+    // =====================================================
+    // 2. CRIA CONTAINER TEMPORÁRIO
+    // =====================================================
+
+    const elementoExportacao =
+        document.createElement("div");
+
+    elementoExportacao.style.width =
+        "1600px";
+
+    elementoExportacao.style.height =
+        "1000px";
+
+    elementoExportacao.style.position =
+        "fixed";
+
+    elementoExportacao.style.left =
+        "-10000px";
+
+    elementoExportacao.style.top =
+        "0";
+
+    elementoExportacao.style.background =
+        "#ffffff";
+
+    document.body.appendChild(
+        elementoExportacao
     );
 
-    mapaEspecies.invalidateSize(false);
+
+    // =====================================================
+    // 3. CRIA MAPA TEMPORÁRIO
+    // =====================================================
+
+    const mapaExportacao =
+        L.map(
+            elementoExportacao,
+            {
+                zoomControl: false,
+                attributionControl: false
+            }
+        );
+
+
+    // =====================================================
+    // 4. MAPA BASE
+    // =====================================================
+
+    const camadaBaseExportacao =
+        L.tileLayer(
+            `https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`,
+            {
+                maxZoom: 19,
+                noWrap: true,
+                crossOrigin: true,
+                subdomains: "abcd"
+            }
+        ).addTo(mapaExportacao);
+
+
+    // =====================================================
+    // 5. ENQUADRA DISTRIBUIÇÃO
+    // =====================================================
+
+    mapaExportacao.invalidateSize(true);
+
+    if (limitesPontos.isValid()) {
+
+        const limitesFigura =
+            expandirLimites(
+                limitesPontos,
+                0.12
+            );
+
+        mapaExportacao.fitBounds(
+            limitesFigura,
+            {
+                padding: [60, 60],
+                maxZoom: 9,
+                animate: false
+            }
+        );
+
+    } else {
+
+        mapaExportacao.fitBounds(
+            limitesAmericaDoSul,
+            {
+                padding: [60, 60],
+                animate: false
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // 6. ESPERA O MAPA BASE
+    // =====================================================
 
     await new Promise(function (resolver) {
-        setTimeout(resolver, 1000);
+
+        let resolvido = false;
+
+        function finalizar() {
+
+            if (resolvido) {
+                return;
+            }
+
+            resolvido = true;
+
+            setTimeout(
+                resolver,
+                300
+            );
+        }
+
+        camadaBaseExportacao.once(
+            "load",
+            finalizar
+        );
+
+        setTimeout(
+            finalizar,
+            3000
+        );
+
     });
 
-    elementoMapa.classList.add("mapa-em-exportacao");
 
-    await new Promise(function (resolver) {
-        setTimeout(resolver, 350);
-    });
+    // =====================================================
+    // 7. CAPTURA APENAS O MAPA BASE
+    // =====================================================
 
     let captura;
 
     try {
-        captura = await html2canvas(elementoMapa, {
-            backgroundColor: "#ffffff",
-            scale: 2,
-            useCORS: true,
-            allowTaint: false,
-            logging: false
-        });
-    } finally {
-        elementoMapa.classList.remove("mapa-em-exportacao");
-        mapaEspecies.setView(
-            centroAnterior,
-            zoomAnterior,
-            { animate: false }
+
+        captura = await html2canvas(
+            elementoExportacao,
+            {
+                backgroundColor:
+                    "#ffffff",
+
+                scale: 2,
+
+                useCORS: true,
+
+                allowTaint: false,
+
+                logging: false
+            }
         );
-        mapaEspecies.invalidateSize(false);
+
+
+        // =================================================
+        // 8. DESENHA OS PONTOS DIRETAMENTE NO CANVAS
+        // =================================================
+
+        const contextoMapa =
+            captura.getContext("2d");
+
+        const escalaCaptura = 2;
+
+        pontos.forEach(function (ponto) {
+
+            const posicao =
+                mapaExportacao
+                    .latLngToContainerPoint([
+                        ponto.latitude,
+                        ponto.longitude
+                    ]);
+
+            const x =
+                posicao.x *
+                escalaCaptura;
+
+            const y =
+                posicao.y *
+                escalaCaptura;
+
+            const raio =
+                ponto.radius *
+                escalaCaptura;
+
+            contextoMapa.beginPath();
+
+            contextoMapa.arc(
+                x,
+                y,
+                raio,
+                0,
+                Math.PI * 2
+            );
+
+            contextoMapa.fillStyle =
+                ponto.fillColor;
+
+            contextoMapa.globalAlpha =
+                ponto.fillOpacity;
+
+            contextoMapa.fill();
+
+            contextoMapa.globalAlpha = 1;
+
+            contextoMapa.strokeStyle =
+                ponto.color;
+
+            contextoMapa.lineWidth =
+                ponto.weight *
+                escalaCaptura;
+
+            contextoMapa.stroke();
+
+        });
+
+    } finally {
+
+        mapaExportacao.remove();
+
+        elementoExportacao.remove();
+
     }
 
-    const itens = obterCamadasAtivasParaExportacao();
-    const linhasLegenda = Math.max(
-        1,
-        Math.ceil(itens.length / 2)
-    );
-    const alturaCabecalho = 130;
-    const alturaLegenda = 110 + linhasLegenda * 38;
-    const canvasFinal = document.createElement("canvas");
 
-    canvasFinal.width = captura.width;
+    // =====================================================
+    // 9. MONTA FIGURA FINAL
+    // =====================================================
+
+    const itens =
+        obterCamadasAtivasParaExportacao();
+
+    const linhasLegenda =
+        Math.max(
+            1,
+            Math.ceil(
+                itens.length / 2
+            )
+        );
+
+    const alturaCabecalho =
+        130;
+
+    const alturaLegenda =
+        110 +
+        linhasLegenda * 38;
+
+    const canvasFinal =
+        document.createElement("canvas");
+
+    canvasFinal.width =
+        captura.width;
+
     canvasFinal.height =
-        alturaCabecalho + captura.height + alturaLegenda;
+        alturaCabecalho +
+        captura.height +
+        alturaLegenda;
 
-    const contexto = canvasFinal.getContext("2d");
-    contexto.fillStyle = "#ffffff";
+    const contexto =
+        canvasFinal.getContext("2d");
+
+    contexto.fillStyle =
+        "#ffffff";
+
     contexto.fillRect(
         0,
         0,
@@ -5501,11 +5810,22 @@ async function criarImagemDoMapa() {
         canvasFinal.height
     );
 
-    const nomePesquisado =
-        String(campoBusca.value || "").trim();
 
-    contexto.fillStyle = "#073f43";
-    contexto.font = "bold 40px Arial";
+    // =====================================================
+    // 10. TÍTULO
+    // =====================================================
+
+    const nomePesquisado =
+        String(
+            campoBusca.value || ""
+        ).trim();
+
+    contexto.fillStyle =
+        "#073f43";
+
+    contexto.font =
+        "bold 40px Arial";
+
     contexto.fillText(
         nomePesquisado
             ? `Mapa de ocorrências — ${nomePesquisado}`
@@ -5514,34 +5834,67 @@ async function criarImagemDoMapa() {
         55
     );
 
-    contexto.fillStyle = "#526461";
-    contexto.font = "21px Arial";
+
+    // =====================================================
+    // 11. SUBTÍTULO
+    // =====================================================
+
+    contexto.fillStyle =
+        "#526461";
+
+    contexto.font =
+        "21px Arial";
+
     contexto.fillText(
         "IchthyoData — integração de registros de ocorrência",
         36,
         94
     );
 
-    contexto.drawImage(captura, 0, alturaCabecalho);
+
+    // =====================================================
+    // 12. MAPA
+    // =====================================================
+
+    contexto.drawImage(
+        captura,
+        0,
+        alturaCabecalho
+    );
+
+
+    // =====================================================
+    // 13. LEGENDA
+    // =====================================================
 
     desenharLegendaExportacao(
         contexto,
         itens,
         canvasFinal.width,
-        alturaCabecalho + captura.height + 45
+        alturaCabecalho +
+        captura.height +
+        45
     );
 
-    contexto.fillStyle = "#65736f";
-    contexto.font = "18px Arial";
+
+    // =====================================================
+    // 14. CRÉDITOS
+    // =====================================================
+
+    contexto.fillStyle =
+        "#65736f";
+
+    contexto.font =
+        "18px Arial";
+
     contexto.fillText(
-        "Mapa-base © OpenStreetMap contributors | Gerado no IchthyoData",
+        "Mapa-base © OpenStreetMap contributors / CARTO | Gerado no IchthyoData",
         36,
         canvasFinal.height - 24
     );
 
     return canvasFinal;
 }
-
 function nomeArquivoMapa(extensao) {
     const nome = String(campoBusca.value || "mapa")
         .trim()
@@ -5623,6 +5976,91 @@ async function exportarMapa(formato) {
         botaoExportarMapaPDF.disabled = false;
     }
 }
+
+function obterLimitesPontosVisiveis() {
+
+    const limites = L.latLngBounds([]);
+
+    const camadasOcorrencias = [
+        camadaGBIF,
+        camadaSpeciesLink,
+        camadaFishNet2,
+        camadaPlazi,
+        camadaDadosUsuario
+    ];
+
+    camadasOcorrencias.forEach(function (camada) {
+
+        // Considera somente fontes atualmente visíveis no mapa
+        if (
+            camada &&
+            mapaEspecies.hasLayer(camada)
+        ) {
+
+            camada.eachLayer(function (layer) {
+
+                if (
+                    typeof layer.getLatLng === "function"
+                ) {
+                    limites.extend(
+                        layer.getLatLng()
+                    );
+                }
+
+            });
+
+        }
+
+    });
+
+    return limites;
+}
+
+
+function expandirLimites(
+    limites,
+    proporcao = 0.12
+) {
+
+    const sul = limites.getSouth();
+    const norte = limites.getNorth();
+    const oeste = limites.getWest();
+    const leste = limites.getEast();
+
+    let amplitudeLat =
+        norte - sul;
+
+    let amplitudeLng =
+        leste - oeste;
+
+    // Evita margem zero quando os registros
+    // estão praticamente no mesmo ponto
+    if (amplitudeLat < 0.2) {
+        amplitudeLat = 0.2;
+    }
+
+    if (amplitudeLng < 0.2) {
+        amplitudeLng = 0.2;
+    }
+
+    const margemLat =
+        amplitudeLat * proporcao;
+
+    const margemLng =
+        amplitudeLng * proporcao;
+
+    return L.latLngBounds(
+        [
+            sul - margemLat,
+            oeste - margemLng
+        ],
+        [
+            norte + margemLat,
+            leste + margemLng
+        ]
+    );
+}
+
 
 botaoExportarMapaPNG.addEventListener("click", function () {
     exportarMapa("png");
