@@ -197,14 +197,11 @@ const limitesAmericaDoSul = L.latLngBounds(
 );
 
 const mapaEspecies = L.map("mapa-especies", {
-    maxBounds: limitesAmericaDoSul,
-    maxBoundsViscosity: 1.0,
-    minZoom: 3,
-    preferCanvas: true
-}).setView(
-    [-15, -60],
-    4
-);
+
+     maxZoom: 19,
+    zoomControl: true
+}).setView([-15, -60], 4);
+
 
 const camadaProjeto = L.featureGroup().addTo(mapaEspecies);
 const camadaGBIF = L.featureGroup();
@@ -1810,9 +1807,47 @@ if (totalPrevisto > 5000) {
         botao.textContent = textoOriginal;
     }
 }
+
+function ajustarMapaAosPontos() {
+
+    const limites = L.latLngBounds([]);
+
+    const camadasOcorrencias = [
+        camadaGBIF,
+        camadaSpeciesLink,
+        camadaFishNet2,
+        camadaPlazi,
+        camadaDadosUsuario
+    ];
+
+    camadasOcorrencias.forEach(function (camada) {
+
+        if (!camada) return;
+
+        camada.eachLayer(function (layer) {
+
+            if (typeof layer.getLatLng === "function") {
+                limites.extend(layer.getLatLng());
+            }
+
+        });
+
+    });
+
+    if (limites.isValid()) {
+        mapaEspecies.fitBounds(limites, {
+            padding: [40, 40],
+            maxZoom: 8,
+            animate: false
+        });
+    }
+}
+
+
+
 formularioBusca.addEventListener(
     "submit",
-    function (evento) {
+    async function (evento) {
         evento.preventDefault();
 
         const nomeCientifico =
@@ -1831,10 +1866,14 @@ resultadosBancos.plazi = null;
 
 atualizarQuadroResultados(nomeCientifico);
 
-buscarOcorrenciasGBIF(nomeCientifico);
-buscarOcorrenciasSpeciesLink(nomeCientifico);
-buscarOcorrenciasFishNet2(nomeCientifico);
-buscarOcorrenciasPlazi(nomeCientifico);
+await Promise.allSettled([
+    buscarOcorrenciasGBIF(nomeCientifico),
+    buscarOcorrenciasSpeciesLink(nomeCientifico),
+    buscarOcorrenciasFishNet2(nomeCientifico),
+    buscarOcorrenciasPlazi(nomeCientifico)
+]);
+
+ajustarMapaAosPontos();
     }
 );
 
@@ -2255,18 +2294,7 @@ function desenharRegistrosGBIF(
         mapaEspecies.removeLayer(camadaGBIF);
     }
 
-    const limitesGBIF =
-        camadaGBIF.getBounds();
-
-    if (limitesGBIF.isValid()) {
-        mapaEspecies.fitBounds(
-            limitesGBIF,
-            {
-                padding: [30, 30],
-                maxZoom: 8
-            }
-        );
-    }
+const limitesGBIF = camadaGBIF.getBounds();
 
     return registrosPorCoordenada.size;
 }
@@ -2808,18 +2836,54 @@ function desenharRegistrosSpeciesLink(
         mapaEspecies.removeLayer(camadaSpeciesLink);
     }
 
-    const limitesSpeciesLink =
-        camadaSpeciesLink.getBounds();
+    const limitesSpeciesLink = camadaSpeciesLink.getBounds();
 
-    if (limitesSpeciesLink.isValid()) {
+/*
+if (limitesSpeciesLink.isValid()) {
+    mapaEspecies.fitBounds(
+        limitesSpeciesLink,
+        {
+            padding: [35, 35],
+            maxZoom: 8
+        }
+    );
+}
+*/
+
+
+function ajustarMapaAosPontos() {
+
+    const pontos = [];
+
+    mapaEspecies.eachLayer(function (layer) {
+
+        if (
+            layer instanceof L.Marker ||
+            layer instanceof L.CircleMarker
+        ) {
+            pontos.push(layer.getLatLng());
+        }
+
+    });
+
+    if (pontos.length === 0) {
+        return;
+    }
+
+    const limites = L.latLngBounds(pontos);
+
+    if (limites.isValid()) {
         mapaEspecies.fitBounds(
-            limitesSpeciesLink,
+            limites,
             {
-                padding: [35, 35],
-                maxZoom: 8
+                padding: [50, 50],
+                maxZoom: 8,
+                animate: false
             }
         );
     }
+}
+
 
     return {
         carregados: registrosCarregados,
