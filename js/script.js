@@ -192,16 +192,17 @@ fishNet2Coordenadas.textContent = "…";
 
 // INÍCIO DO MAPA
 const limitesAmericaDoSul = L.latLngBounds(
-    [-57, -90],
+    [-60, -90],
     [15, -30]
 );
 
 const mapaEspecies = L.map("mapa-especies", {
-
-     maxZoom: 19,
+    maxBounds: limitesAmericaDoSul,
+    maxBoundsViscosity: 1.0,
+    minZoom: 3,
+    maxZoom: 19,
     zoomControl: true
 }).setView([-15, -60], 4);
-
 
 const camadaProjeto = L.featureGroup().addTo(mapaEspecies);
 const camadaGBIF = L.featureGroup();
@@ -209,6 +210,14 @@ const camadaSpeciesLink = L.featureGroup();
 const camadaFishNet2 = L.featureGroup();
 const camadaPlazi = L.featureGroup();
 const camadaDadosUsuario = L.featureGroup();
+
+mapaEspecies.on("zoomend", function () {
+    const popupAberto = mapaEspecies._popup;
+
+    if (popupAberto) {
+        popupAberto._adjustPan();
+    }
+});
 
 // CAMADA DAS BACIAS HIDROGRÁFICAS
 const camadaBacias = L.geoJSON(null, {
@@ -1843,7 +1852,25 @@ function ajustarMapaAosPontos() {
     }
 }
 
+function normalizarNomeCientifico(nome) {
 
+    const nomeLimpo = nome
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLowerCase();
+
+    if (!nomeLimpo) {
+        return "";
+    }
+
+    const partes = nomeLimpo.split(" ");
+
+    partes[0] =
+        partes[0].charAt(0).toUpperCase() +
+        partes[0].slice(1);
+
+    return partes.join(" ");
+}
 
 formularioBusca.addEventListener(
     "submit",
@@ -1851,7 +1878,9 @@ formularioBusca.addEventListener(
         evento.preventDefault();
 
         const nomeCientifico =
-            campoBusca.value.trim();
+            normalizarNomeCientifico(campoBusca.value);
+
+        campoBusca.value = nomeCientifico;
 
         if (nomeCientifico === "") {
             resultadoBusca.textContent =
@@ -1860,9 +1889,9 @@ formularioBusca.addEventListener(
         }
 
         resultadosBancos.gbif = null;
-resultadosBancos.speciesLink = null;
-resultadosBancos.fishNet2 = null;
-resultadosBancos.plazi = null;
+        resultadosBancos.speciesLink = null;
+        resultadosBancos.fishNet2 = null;
+        resultadosBancos.plazi = null;
 
 atualizarQuadroResultados(nomeCientifico);
 
@@ -2113,10 +2142,10 @@ const opcoesPopupOcorrencias = {
     keepInView: true,
 
     autoPanPaddingTopLeft:
-        L.point(30, 30),
+        L.point(30, 90),
 
     autoPanPaddingBottomRight:
-        L.point(30, 30)
+        L.point(30, 90)
 };
 
 function vincularPopupOcorrencia(
