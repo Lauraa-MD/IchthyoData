@@ -5585,6 +5585,11 @@ async function criarImagemDoMapa() {
         }
     );
 
+    const rendererExportacao =
+    L.canvas({
+        padding: 0.5
+    });
+
     // =====================================================
     // 4. MAPA BASE
     // =====================================================
@@ -5608,16 +5613,29 @@ async function criarImagemDoMapa() {
             ponto.longitude
         ],
         {
-            radius: ponto.radius,
-            color: ponto.color,
-            weight: ponto.weight,
-            fillColor: ponto.fillColor,
-            fillOpacity: ponto.fillOpacity
+            renderer:
+                rendererExportacao,
+
+            radius:
+                ponto.radius,
+
+            color:
+                ponto.color,
+
+            weight:
+                ponto.weight,
+
+            opacity: 1,
+
+            fillColor:
+                ponto.fillColor,
+
+            fillOpacity:
+                ponto.fillOpacity
         }
     ).addTo(mapaExportacao);
 
 });
-
 
     // =====================================================
     // 5. ENQUADRA DISTRIBUIÇÃO
