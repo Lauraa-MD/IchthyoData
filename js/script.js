@@ -5602,29 +5602,108 @@ async function criarImagemDoMapa() {
             }
         ).addTo(mapaExportacao);
 
-        
+        // =====================================================
+// 4.1 COPIA AS CAMADAS DE REFERÊNCIA ATIVAS
+// =====================================================
+
+// GRANDES BACIAS HIDROGRÁFICAS
+if (mapaEspecies.hasLayer(camadaBacias)) {
+
+    camadaBacias.eachLayer(function (layer) {
+
+        if (!layer.feature) return;
+
+        L.geoJSON(
+            layer.feature,
+            {
+                style: {
+                    color: "#2f7d6d",
+                    weight: 1.2,
+                    opacity: 1,
+                    fillColor: "#7fc8b8",
+                    fillOpacity: 0.12
+                }
+            }
+        ).addTo(mapaExportacao);
+
+    });
+
+}
+
+
+// ECORREGIÕES FEOW
+if (mapaEspecies.hasLayer(camadaEcorregioes)) {
+
+    camadaEcorregioes.eachLayer(function (layer) {
+
+        if (!layer.feature) return;
+
+        L.geoJSON(
+            layer.feature,
+            {
+                style: {
+                    color: "#7d4ca5",
+                    weight: 1.6,
+                    opacity: 0.9,
+                    fillColor: "#b99bd3",
+                    fillOpacity: 0.20
+                }
+            }
+        ).addTo(mapaExportacao);
+
+    });
+
+}
+
+
+// PRINCIPAIS RIOS
+if (mapaEspecies.hasLayer(camadaRios)) {
+
+    camadaRios.eachLayer(function (layer) {
+
+        if (!layer.feature) return;
+
+        const ordemStrahler =
+            Number(
+                layer.feature
+                    ?.properties
+                    ?.ORD_STRA
+            ) || 6;
+
+        L.geoJSON(
+            layer.feature,
+            {
+                style: {
+                    color: "#2f80c9",
+                    weight:
+                        ordemStrahler >= 8
+                            ? 1.8
+                            : 1.1,
+                    opacity: 0.8
+                }
+            }
+        ).addTo(mapaExportacao);
+
+    });
+
+}
 
     // =====================================================
-    // =====================================================
-// 5. USA O MESMO ENQUADRAMENTO DO MAPA DA TELA
+// 5. REPRODUZ A ÁREA VISÍVEL DO MAPA DA TELA
 // =====================================================
 
 mapaExportacao.invalidateSize(true);
 
-const centroAtual =
-    mapaEspecies.getCenter();
+const limitesVisiveis =
+    mapaEspecies.getBounds();
 
-const zoomAtual =
-    mapaEspecies.getZoom();
-
-mapaExportacao.setView(
-    centroAtual,
-    zoomAtual,
+mapaExportacao.fitBounds(
+    limitesVisiveis,
     {
+        padding: [0, 0],
         animate: false
     }
 );
-
 
     // =====================================================
     // 6. ESPERA O MAPA BASE
