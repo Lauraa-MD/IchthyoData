@@ -214,7 +214,7 @@ main {
 }
 
 .indicador-usuario {
-    background-color: var(--azul-dados);
+    background-color: #f4c542;
 }
 
 .indicador-specieslink {
@@ -269,6 +269,55 @@ main {
 .cabecalho-mapa > p {
     max-width: 430px;
     line-height: 1.6;
+}
+
+.acoes-mapa {
+    width: min(100%, 430px);
+}
+
+.acoes-mapa p {
+    margin: 0 0 10px;
+    line-height: 1.5;
+}
+
+.botoes-exportacao-mapa {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.botoes-exportacao-mapa button {
+    padding: 8px 12px;
+    color: #ffffff;
+    background-color: var(--verde-principal);
+    border: 1px solid var(--verde-principal);
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+}
+
+.botoes-exportacao-mapa button:hover {
+    background-color: var(--verde-escuro);
+    border-color: var(--verde-escuro);
+}
+
+.botoes-exportacao-mapa button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+#status-exportacao-mapa {
+    display: block;
+    min-height: 18px;
+    margin-top: 7px;
+    color: var(--texto-secundario);
+}
+
+#mapa-especies.mapa-em-exportacao .leaflet-control-container,
+#mapa-especies.mapa-em-exportacao .leaflet-popup-pane,
+#mapa-especies.mapa-em-exportacao .leaflet-tooltip-pane {
+    display: none;
 }
 
 
@@ -788,7 +837,7 @@ footer p {
 
 
 .painel-usuario {
-    border-top: 4px solid var(--azul-dados);
+    border-top: 4px solid #f4c542;
 }
 
 .grade-indicadores {
@@ -873,10 +922,89 @@ footer p {
     font-weight: bold;
 }
 
+.controle-dados::before {
+    content: "Fontes dos registros";
+}
+
+.controle-referencia::before {
+    content: "Camadas de referência";
+}
+
 .controle-dados label,
 .controle-referencia label {
     margin: 2px 0;
     line-height: 1.25;
+}
+
+.rotulo-fonte-mapa {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 18px;
+}
+
+.amostra-fonte-mapa {
+    display: inline-block;
+    flex: 0 0 13px;
+    width: 13px;
+    height: 13px;
+    box-sizing: border-box;
+    border: 2px solid;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.amostra-gbif {
+    background-color: #f28c28;
+    border-color: #9a4d00;
+}
+
+.amostra-specieslink {
+    background-color: #9b72cf;
+    border-color: #4b287d;
+}
+
+.amostra-fishnet2 {
+    background-color: #e53935;
+    border-color: #8b1a1a;
+}
+
+.amostra-plazi {
+    background-color: #00897b;
+    border-color: #005f56;
+}
+
+.amostra-usuario {
+    background-color: #f4c542;
+    border-color: #8a6a00;
+}
+
+.rotulo-camada-referencia {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 18px;
+}
+
+.amostra-camada-referencia {
+    display: inline-block;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 0;
+    border-top: 3px solid;
+    border-radius: 2px;
+}
+
+.amostra-bacias {
+    border-color: #2f7d6d;
+}
+
+.amostra-ecorregioes {
+    border-color: #7d4ca5;
+}
+
+.amostra-rios {
+    border-color: #2f80c9;
 }
 
 /* =====================================================
@@ -1472,7 +1600,11 @@ label > span {
     box-sizing: border-box;
     width: 290px;
     max-width: calc(100vw - 30px);
-    padding: 12px 14px;
+    padding: 0;
+    margin-top: 10px !important;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
 }
 
 .painel-relevo-titulo {
@@ -1484,7 +1616,12 @@ label > span {
 }
 
 .legenda-relevo {
-    margin-top: 8px;
+    margin-top: 0;
+    padding: 12px 14px;
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 1px solid #b8b8b8;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28);
 }
 
 .legenda-fontes-relevo {

@@ -199,18 +199,19 @@ const limitesAmericaDoSul = L.latLngBounds(
 const mapaEspecies = L.map("mapa-especies", {
     maxBounds: limitesAmericaDoSul,
     maxBoundsViscosity: 1.0,
-    minZoom: 3
+    minZoom: 3,
+    preferCanvas: true
 }).setView(
     [-15, -60],
     4
 );
 
 const camadaProjeto = L.featureGroup().addTo(mapaEspecies);
-const camadaGBIF = L.featureGroup().addTo(mapaEspecies);
-const camadaSpeciesLink = L.featureGroup().addTo(mapaEspecies);
-const camadaFishNet2 = L.featureGroup().addTo(mapaEspecies);
-const camadaPlazi = L.featureGroup().addTo(mapaEspecies);
-const camadaDadosUsuario = L.featureGroup().addTo(mapaEspecies);
+const camadaGBIF = L.featureGroup();
+const camadaSpeciesLink = L.featureGroup();
+const camadaFishNet2 = L.featureGroup();
+const camadaPlazi = L.featureGroup();
+const camadaDadosUsuario = L.featureGroup();
 
 // CAMADA DAS BACIAS HIDROGRÁFICAS
 const camadaBacias = L.geoJSON(null, {
@@ -445,26 +446,64 @@ fetch("dados/rios/rios_principais_simplificados.geojson")
     });
 
 
+const CARTO_API_KEY = "cb1_3krf_1_33f29be34178112a0be4f816";
+
 L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    `https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`,
     {
         maxZoom: 19,
         noWrap: true,
+        crossOrigin: true,
+        subdomains: "abcd",
         attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            '&copy; OpenStreetMap contributors &copy; CARTO'
     }
-        ).addTo(mapaEspecies);
+).addTo(mapaEspecies);
 
 
 
 
 // CONTROLE DOS TIPOS DE DADOS
+function rotuloFonteMapa(
+    classe,
+    nome
+) {
+    return `
+        <span class="rotulo-fonte-mapa">
+            <span
+                class="amostra-fonte-mapa ${classe}"
+                aria-hidden="true"
+            ></span>
+            <span>${nome}</span>
+        </span>
+    `;
+}
+
 const tiposDados = {
-    "Registros GBIF": camadaGBIF,
-    "Registros SpeciesLink": camadaSpeciesLink,
-    "Registros FishNet2": camadaFishNet2,
-    "Plazi — literatura": camadaPlazi,
-    "Dados importados": camadaDadosUsuario
+    [rotuloFonteMapa(
+        "amostra-gbif",
+        "GBIF"
+    )]: camadaGBIF,
+
+    [rotuloFonteMapa(
+        "amostra-specieslink",
+        "speciesLink"
+    )]: camadaSpeciesLink,
+
+    [rotuloFonteMapa(
+        "amostra-fishnet2",
+        "FishNet2"
+    )]: camadaFishNet2,
+
+    [rotuloFonteMapa(
+        "amostra-plazi",
+        "Plazi — literatura"
+    )]: camadaPlazi,
+
+    [rotuloFonteMapa(
+        "amostra-usuario",
+        "Dados importados"
+    )]: camadaDadosUsuario
 };
 
 
@@ -473,12 +512,41 @@ const tiposDados = {
 const camadaSimbolosFontes =
     L.layerGroup();
 
+// Grupo inicialmente vazio que representa o relevo no
+// controle de camadas de referência.
+const camadaRelevo = L.layerGroup();
+
 
 // CONTROLE DAS CAMADAS DE REFERÊNCIA
+function rotuloCamadaReferencia(classe, nome) {
+    return `
+        <span class="rotulo-camada-referencia">
+            <span
+                class="amostra-camada-referencia ${classe}"
+                aria-hidden="true"
+            ></span>
+            <span>${nome}</span>
+        </span>
+    `;
+}
+
 const camadasReferencia = {
-    "Grandes bacias hidrográficas": camadaBacias,
-    "Ecorregiões de água doce — FEOW": camadaEcorregioes,
-    "Principais rios da América do Sul": camadaRios
+    [rotuloCamadaReferencia(
+        "amostra-bacias",
+        "Grandes bacias hidrográficas"
+    )]: camadaBacias,
+
+    [rotuloCamadaReferencia(
+        "amostra-ecorregioes",
+        "Ecorregiões de água doce — FEOW"
+    )]: camadaEcorregioes,
+
+    [rotuloCamadaReferencia(
+        "amostra-rios",
+        "Principais rios da América do Sul"
+    )]: camadaRios,
+
+    "Relevo e altitude": camadaRelevo
 };
 
 
@@ -513,15 +581,12 @@ controleReferencia
 // CAMADA VISUAL DE RELEVO
 // =====================================================
 
-// Grupo inicialmente vazio que aparecerá no controle.
-const camadaRelevo = L.layerGroup();
-
 // =====================================================
-// PAINEL DE RELEVO E ALTITUDE
+// LEGENDA DE RELEVO E ALTITUDE
 // =====================================================
 
 const painelRelevo = L.control({
-    position: "bottomright"
+    position: "topright"
 });
 
 painelRelevo.onAdd = function () {
@@ -531,18 +596,6 @@ painelRelevo.onAdd = function () {
     );
 
     painel.innerHTML = `
-        <div class="painel-relevo-titulo">
-            Relevo e altitude
-        </div>
-
-        <label class="painel-relevo-opcao">
-            <input
-                type="checkbox"
-                id="ativar-relevo"
-            >
-            Mostrar relevo
-        </label>
-
         <div
             id="legenda-relevo"
             class="legenda-relevo"
@@ -610,26 +663,22 @@ painelRelevo.onAdd = function () {
 
 painelRelevo.addTo(mapaEspecies);
 
-const botaoAtivarRelevo =
-    document.querySelector("#ativar-relevo");
-
 const legendaRelevo =
     document.querySelector("#legenda-relevo");
 
-botaoAtivarRelevo.addEventListener(
-    "change",
-    async function () {
-        if (botaoAtivarRelevo.checked) {
-            camadaRelevo.addTo(mapaEspecies);
-            legendaRelevo.classList.add("visivel");
-        } else {
-            mapaEspecies.removeLayer(camadaRelevo);
-            legendaRelevo.classList.remove("visivel");
-        }
-
+mapaEspecies.on("overlayadd", async function (evento) {
+    if (evento.layer === camadaRelevo) {
+        legendaRelevo.classList.add("visivel");
         await atualizarCoresDosRegistros();
     }
-);
+});
+
+mapaEspecies.on("overlayremove", async function (evento) {
+    if (evento.layer === camadaRelevo) {
+        legendaRelevo.classList.remove("visivel");
+        await atualizarCoresDosRegistros();
+    }
+});
 
 
 async function criarCamadaVisualRelevo() {
@@ -964,8 +1013,8 @@ const estilosPorFonte = {
     },
 
     dadosProprios: {
-        color: "#174f78",
-        fillColor: "#3b8fc2"
+        color: "#8a6a00",
+        fillColor: "#f4c542"
     }
 };
 
@@ -1115,7 +1164,7 @@ function formatarAltitude(altitude) {
 function atualizarSimbolosDasFontes() {
     camadaSimbolosFontes.clearLayers();
 
-    if (!botaoAtivarRelevo.checked) {
+    if (!mapaEspecies.hasLayer(camadaRelevo)) {
         if (
             mapaEspecies.hasLayer(
                 camadaSimbolosFontes
@@ -1141,7 +1190,7 @@ function atualizarSimbolosAoAlterarCamada(
     ];
 
     if (
-        botaoAtivarRelevo.checked &&
+        mapaEspecies.hasLayer(camadaRelevo) &&
         camadasDeFontes.includes(evento.layer)
     ) {
         atualizarSimbolosDasFontes();
@@ -1278,7 +1327,7 @@ mapaEspecies.on(
 // Atualiza a visualização normal ou altitudinal.
 async function atualizarCoresDosRegistros() {
     const relevoAtivo =
-        botaoAtivarRelevo.checked;
+        mapaEspecies.hasLayer(camadaRelevo);
 
     const camadas = [
         {
@@ -1396,7 +1445,7 @@ function atualizarSimbolosAoAlterarCamada(
     ];
 
     if (
-        botaoAtivarRelevo.checked &&
+        mapaEspecies.hasLayer(camadaRelevo) &&
         camadasDeFontes.includes(evento.layer)
     ) {
         atualizarSimbolosDasFontes();
@@ -2193,13 +2242,17 @@ function desenharRegistrosGBIF(
     );
 
     if (
-        !mapaEspecies.hasLayer(
-            camadaGBIF
-        )
+        registrosPorCoordenada.size > 0 &&
+        !mapaEspecies.hasLayer(camadaGBIF)
     ) {
         camadaGBIF.addTo(
             mapaEspecies
         );
+    } else if (
+        registrosPorCoordenada.size === 0 &&
+        mapaEspecies.hasLayer(camadaGBIF)
+    ) {
+        mapaEspecies.removeLayer(camadaGBIF);
     }
 
     const limitesGBIF =
@@ -2255,6 +2308,7 @@ async function buscarOcorrenciasGBIF(
     nomeCientifico
 ) {
     camadaGBIF.clearLayers();
+    mapaEspecies.removeLayer(camadaGBIF);
 
     estadoGBIF = {
         nomeCientifico: nomeCientifico,
@@ -2741,13 +2795,17 @@ function desenharRegistrosSpeciesLink(
     );
 
     if (
-        !mapaEspecies.hasLayer(
-            camadaSpeciesLink
-        )
+        registrosPorCoordenada.size > 0 &&
+        !mapaEspecies.hasLayer(camadaSpeciesLink)
     ) {
         camadaSpeciesLink.addTo(
             mapaEspecies
         );
+    } else if (
+        registrosPorCoordenada.size === 0 &&
+        mapaEspecies.hasLayer(camadaSpeciesLink)
+    ) {
+        mapaEspecies.removeLayer(camadaSpeciesLink);
     }
 
     const limitesSpeciesLink =
@@ -2808,6 +2866,7 @@ async function buscarOcorrenciasSpeciesLink(
     nomeCientifico
 ) {
     camadaSpeciesLink.clearLayers();
+    mapaEspecies.removeLayer(camadaSpeciesLink);
 
     estadoSpeciesLink = {
         nomeCientifico: nomeCientifico,
@@ -3365,13 +3424,17 @@ function desenharRegistrosFishNet2(
     );
 
     if (
-        !mapaEspecies.hasLayer(
-            camadaFishNet2
-        )
+        registrosPorCoordenada.size > 0 &&
+        !mapaEspecies.hasLayer(camadaFishNet2)
     ) {
         camadaFishNet2.addTo(
             mapaEspecies
         );
+    } else if (
+        registrosPorCoordenada.size === 0 &&
+        mapaEspecies.hasLayer(camadaFishNet2)
+    ) {
+        mapaEspecies.removeLayer(camadaFishNet2);
     }
 
     return {
@@ -3424,6 +3487,7 @@ async function buscarOcorrenciasFishNet2(
     nomeCientifico
 ) {
     camadaFishNet2.clearLayers();
+    mapaEspecies.removeLayer(camadaFishNet2);
 
     estadoFishNet2 = {
         nomeCientifico: nomeCientifico,
@@ -3978,9 +4042,15 @@ function desenharRegistrosPlazi(
     );
 
     if (
+        registrosPorCoordenada.size > 0 &&
         !mapaEspecies.hasLayer(camadaPlazi)
     ) {
         camadaPlazi.addTo(mapaEspecies);
+    } else if (
+        registrosPorCoordenada.size === 0 &&
+        mapaEspecies.hasLayer(camadaPlazi)
+    ) {
+        mapaEspecies.removeLayer(camadaPlazi);
     }
 
     return {
@@ -4051,6 +4121,7 @@ async function buscarOcorrenciasPlazi(
     nomeCientifico
 ) {
     camadaPlazi.clearLayers();
+    mapaEspecies.removeLayer(camadaPlazi);
 
     estadoPlazi = {
         nomeCientifico: nomeCientifico,
@@ -4429,6 +4500,8 @@ botaoImportarCSV.addEventListener("click", function () {
 dadosCSVImportados = [];
 dadosCSVComAltitude = [];
 cabecalhosCSVImportado = [...cabecalhos];
+camadaDadosUsuario.clearLayers();
+mapaEspecies.removeLayer(camadaDadosUsuario);
 
 
         const indiceEspecie =
@@ -4548,9 +4621,9 @@ dadosCSVImportados.push(registroOriginal);
     [latitude, longitude],
     {
         radius: 5,
-        color: "#174f78",
+        color: "#8a6a00",
         weight: 1,
-        fillColor: "#3b8fc2",
+        fillColor: "#f4c542",
         fillOpacity: 0.75
     }
 ).addTo(camadaDadosUsuario);
@@ -4637,9 +4710,9 @@ function desenharDadosCSVFiltrados() {
             [latitude, longitude],
             {
                 radius: 6,
-                color: "#224f72",
+                color: "#8a6a00",
                 weight: 1.5,
-                fillColor: "#4f92bd",
+                fillColor: "#f4c542",
                 fillOpacity: 0.8
             }
         );
@@ -4673,6 +4746,18 @@ marcador.on("popupopen", async function () {
 
         marcador.addTo(camadaDadosUsuario);
     });
+
+    if (
+        camadaDadosUsuario.getLayers().length > 0 &&
+        !mapaEspecies.hasLayer(camadaDadosUsuario)
+    ) {
+        camadaDadosUsuario.addTo(mapaEspecies);
+    } else if (
+        camadaDadosUsuario.getLayers().length === 0 &&
+        mapaEspecies.hasLayer(camadaDadosUsuario)
+    ) {
+        mapaEspecies.removeLayer(camadaDadosUsuario);
+    }
 }
 
 function aplicarFiltroCSV() {
@@ -4788,6 +4873,7 @@ resultadoExtracaoAltitude.textContent =
 
 botaoRemoverCSV.addEventListener("click", function () {
     camadaDadosUsuario.clearLayers();
+    mapaEspecies.removeLayer(camadaDadosUsuario);
     campoArquivoCSV.value = "";
     dadosCSVImportados = [];
     dadosCSVComAltitude = [];
@@ -5107,3 +5193,348 @@ document.addEventListener(
         );
     }
 );
+
+// =====================================================
+// EXPORTAÇÃO DO MAPA EM PNG E PDF
+// =====================================================
+
+const botaoExportarMapaPNG =
+    document.querySelector("#exportar-mapa-png");
+
+const botaoExportarMapaPDF =
+    document.querySelector("#exportar-mapa-pdf");
+
+const statusExportacaoMapa =
+    document.querySelector("#status-exportacao-mapa");
+
+function obterCamadasAtivasParaExportacao() {
+    const camadas = [
+        {
+            nome: "GBIF",
+            tipo: "ponto",
+            cor: "#f28c28",
+            camada: camadaGBIF
+        },
+        {
+            nome: "speciesLink",
+            tipo: "ponto",
+            cor: "#9b72cf",
+            camada: camadaSpeciesLink
+        },
+        {
+            nome: "FishNet2",
+            tipo: "ponto",
+            cor: "#e53935",
+            camada: camadaFishNet2
+        },
+        {
+            nome: "Plazi — literatura",
+            tipo: "ponto",
+            cor: "#00897b",
+            camada: camadaPlazi
+        },
+        {
+            nome: "Dados importados",
+            tipo: "ponto",
+            cor: "#f4c542",
+            camada: camadaDadosUsuario
+        },
+        {
+            nome: "Grandes bacias hidrográficas",
+            tipo: "linha",
+            cor: "#2f7d6d",
+            camada: camadaBacias
+        },
+        {
+            nome: "Ecorregiões de água doce — FEOW",
+            tipo: "linha",
+            cor: "#7d4ca5",
+            camada: camadaEcorregioes
+        },
+        {
+            nome: "Principais rios da América do Sul",
+            tipo: "linha",
+            cor: "#2f80c9",
+            camada: camadaRios
+        },
+        {
+            nome: "Relevo e altitude",
+            tipo: "relevo",
+            camada: camadaRelevo
+        }
+    ];
+
+    return camadas.filter(function (item) {
+        return mapaEspecies.hasLayer(item.camada);
+    });
+}
+
+function desenharLegendaExportacao(
+    contexto,
+    itens,
+    largura,
+    inicioY
+) {
+    contexto.fillStyle = "#174943";
+    contexto.font = "bold 26px Arial";
+    contexto.fillText("Camadas exibidas", 36, inicioY);
+
+    if (itens.length === 0) {
+        contexto.fillStyle = "#526461";
+        contexto.font = "22px Arial";
+        contexto.fillText(
+            "Nenhuma camada de dados selecionada.",
+            36,
+            inicioY + 38
+        );
+        return;
+    }
+
+    const larguraColuna = largura / 2;
+
+    itens.forEach(function (item, indice) {
+        const coluna = indice % 2;
+        const linha = Math.floor(indice / 2);
+        const x = 38 + coluna * larguraColuna;
+        const y = inicioY + 43 + linha * 38;
+
+        if (item.tipo === "ponto") {
+            contexto.beginPath();
+            contexto.arc(x + 9, y - 7, 8, 0, Math.PI * 2);
+            contexto.fillStyle = item.cor;
+            contexto.fill();
+            contexto.strokeStyle = "#35423e";
+            contexto.lineWidth = 2;
+            contexto.stroke();
+        } else if (item.tipo === "linha") {
+            contexto.beginPath();
+            contexto.moveTo(x, y - 7);
+            contexto.lineTo(x + 28, y - 7);
+            contexto.strokeStyle = item.cor;
+            contexto.lineWidth = 5;
+            contexto.stroke();
+        } else {
+            const gradiente = contexto.createLinearGradient(
+                x,
+                y - 13,
+                x + 30,
+                y - 13
+            );
+            gradiente.addColorStop(0, "#66bd63");
+            gradiente.addColorStop(0.5, "#ffe066");
+            gradiente.addColorStop(1, "#6a1b9a");
+            contexto.fillStyle = gradiente;
+            contexto.fillRect(x, y - 16, 30, 10);
+        }
+
+        contexto.fillStyle = "#263e39";
+        contexto.font = "21px Arial";
+        contexto.fillText(item.nome, x + 40, y);
+    });
+}
+
+async function criarImagemDoMapa() {
+    if (typeof html2canvas !== "function") {
+        throw new Error(
+            "O recurso de exportação de imagem não foi carregado."
+        );
+    }
+
+    const elementoMapa =
+        document.querySelector("#mapa-especies");
+
+    const centroAnterior = mapaEspecies.getCenter();
+    const zoomAnterior = mapaEspecies.getZoom();
+
+    mapaEspecies.fitBounds(
+        limitesAmericaDoSul,
+        {
+            padding: [30, 30],
+            animate: false
+        }
+    );
+
+    mapaEspecies.invalidateSize(false);
+
+    await new Promise(function (resolver) {
+        setTimeout(resolver, 1000);
+    });
+
+    elementoMapa.classList.add("mapa-em-exportacao");
+
+    await new Promise(function (resolver) {
+        setTimeout(resolver, 350);
+    });
+
+    let captura;
+
+    try {
+        captura = await html2canvas(elementoMapa, {
+            backgroundColor: "#ffffff",
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            logging: false
+        });
+    } finally {
+        elementoMapa.classList.remove("mapa-em-exportacao");
+        mapaEspecies.setView(
+            centroAnterior,
+            zoomAnterior,
+            { animate: false }
+        );
+        mapaEspecies.invalidateSize(false);
+    }
+
+    const itens = obterCamadasAtivasParaExportacao();
+    const linhasLegenda = Math.max(
+        1,
+        Math.ceil(itens.length / 2)
+    );
+    const alturaCabecalho = 130;
+    const alturaLegenda = 110 + linhasLegenda * 38;
+    const canvasFinal = document.createElement("canvas");
+
+    canvasFinal.width = captura.width;
+    canvasFinal.height =
+        alturaCabecalho + captura.height + alturaLegenda;
+
+    const contexto = canvasFinal.getContext("2d");
+    contexto.fillStyle = "#ffffff";
+    contexto.fillRect(
+        0,
+        0,
+        canvasFinal.width,
+        canvasFinal.height
+    );
+
+    const nomePesquisado =
+        String(campoBusca.value || "").trim();
+
+    contexto.fillStyle = "#073f43";
+    contexto.font = "bold 40px Arial";
+    contexto.fillText(
+        nomePesquisado
+            ? `Mapa de ocorrências — ${nomePesquisado}`
+            : "Mapa de ocorrências",
+        36,
+        55
+    );
+
+    contexto.fillStyle = "#526461";
+    contexto.font = "21px Arial";
+    contexto.fillText(
+        "IchthyoData — integração de registros de ocorrência",
+        36,
+        94
+    );
+
+    contexto.drawImage(captura, 0, alturaCabecalho);
+
+    desenharLegendaExportacao(
+        contexto,
+        itens,
+        canvasFinal.width,
+        alturaCabecalho + captura.height + 45
+    );
+
+    contexto.fillStyle = "#65736f";
+    contexto.font = "18px Arial";
+    contexto.fillText(
+        "Mapa-base © OpenStreetMap contributors | Gerado no IchthyoData",
+        36,
+        canvasFinal.height - 24
+    );
+
+    return canvasFinal;
+}
+
+function nomeArquivoMapa(extensao) {
+    const nome = String(campoBusca.value || "mapa")
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .toLowerCase() || "mapa";
+
+    return `ichthyodata-${nome}.${extensao}`;
+}
+
+function baixarCanvasComoPNG(canvas) {
+    const link = document.createElement("a");
+    link.download = nomeArquivoMapa("png");
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+}
+
+function baixarCanvasComoPDF(canvas) {
+    if (!window.jspdf?.jsPDF) {
+        throw new Error(
+            "O recurso de exportação em PDF não foi carregado."
+        );
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4"
+    });
+
+    const larguraPagina = pdf.internal.pageSize.getWidth();
+    const alturaPagina = pdf.internal.pageSize.getHeight();
+    const margem = 8;
+    const proporcao = Math.min(
+        (larguraPagina - margem * 2) / canvas.width,
+        (alturaPagina - margem * 2) / canvas.height
+    );
+    const larguraImagem = canvas.width * proporcao;
+    const alturaImagem = canvas.height * proporcao;
+
+    pdf.addImage(
+        canvas.toDataURL("image/png"),
+        "PNG",
+        (larguraPagina - larguraImagem) / 2,
+        (alturaPagina - alturaImagem) / 2,
+        larguraImagem,
+        alturaImagem
+    );
+
+    pdf.save(nomeArquivoMapa("pdf"));
+}
+
+async function exportarMapa(formato) {
+    botaoExportarMapaPNG.disabled = true;
+    botaoExportarMapaPDF.disabled = true;
+    statusExportacaoMapa.textContent =
+        "Preparando o mapa para exportação…";
+
+    try {
+        const canvas = await criarImagemDoMapa();
+
+        if (formato === "pdf") {
+            baixarCanvasComoPDF(canvas);
+        } else {
+            baixarCanvasComoPNG(canvas);
+        }
+
+        statusExportacaoMapa.textContent =
+            "Arquivo criado com sucesso.";
+    } catch (erro) {
+        console.error("Erro ao exportar o mapa:", erro);
+        statusExportacaoMapa.textContent =
+            "Não foi possível exportar o mapa neste navegador.";
+    } finally {
+        botaoExportarMapaPNG.disabled = false;
+        botaoExportarMapaPDF.disabled = false;
+    }
+}
+
+botaoExportarMapaPNG.addEventListener("click", function () {
+    exportarMapa("png");
+});
+
+botaoExportarMapaPDF.addEventListener("click", function () {
+    exportarMapa("pdf");
+});
