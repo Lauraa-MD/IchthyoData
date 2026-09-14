@@ -5605,39 +5605,25 @@ async function criarImagemDoMapa() {
         
 
     // =====================================================
-    // 5. ENQUADRA DISTRIBUIÇÃO
     // =====================================================
+// 5. USA O MESMO ENQUADRAMENTO DO MAPA DA TELA
+// =====================================================
 
-    mapaExportacao.invalidateSize(true);
+mapaExportacao.invalidateSize(true);
 
-    if (limitesPontos.isValid()) {
+const centroAtual =
+    mapaEspecies.getCenter();
 
-        const limitesFigura =
-            expandirLimites(
-                limitesPontos,
-                0.12
-            );
+const zoomAtual =
+    mapaEspecies.getZoom();
 
-        mapaExportacao.fitBounds(
-            limitesFigura,
-            {
-                padding: [60, 60],
-                maxZoom: 9,
-                animate: false
-            }
-        );
-
-    } else {
-
-        mapaExportacao.fitBounds(
-            limitesAmericaDoSul,
-            {
-                padding: [60, 60],
-                animate: false
-            }
-        );
-
+mapaExportacao.setView(
+    centroAtual,
+    zoomAtual,
+    {
+        animate: false
     }
+);
 
 
     // =====================================================
