@@ -50,6 +50,15 @@ img {
     height: auto;
 }
 
+/* Impede que o CSS geral de imagens altere os tiles do Leaflet */
+#mapa-especies .leaflet-tile {
+    max-width: none !important;
+    max-height: none !important;
+    width: 256px;
+    height: 256px;
+}
+
+
 code {
     padding: 2px 6px;
     background-color: #e7eeeb;
@@ -1993,4 +2002,12 @@ body.modal-feedback-aberto {
         transform:
             translateX(-50%);
     }
+}
+
+/* Correcao dos tiles do Leaflet */
+#mapa-especies .leaflet-tile {
+    max-width: none !important;
+    max-height: none !important;
+    width: 256px;
+    height: 256px;
 }
