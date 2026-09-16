@@ -211,13 +211,7 @@ const camadaFishNet2 = L.featureGroup();
 const camadaPlazi = L.featureGroup();
 const camadaDadosUsuario = L.featureGroup();
 
-mapaEspecies.on("zoomend", function () {
-    const popupAberto = mapaEspecies._popup;
 
-    if (popupAberto) {
-        popupAberto._adjustPan();
-    }
-});
 
 // CAMADA DAS BACIAS HIDROGRÁFICAS
 const camadaBacias = L.geoJSON(null, {
