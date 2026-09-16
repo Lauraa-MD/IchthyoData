@@ -1,21 +1,91 @@
-MIT License
+IchthyoData — Software License
 
 Copyright (c) 2026 Laura Modesti Donin
+All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Permitted use
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+IchthyoData is made available for scientific, educational, and other
+non-commercial uses.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Users may access and use the publicly available version of IchthyoData
+for research, teaching, data exploration, and related non-commercial
+activities.
+
+2. Citation
+
+Scientific, academic, or technical use of IchthyoData must acknowledge
+and cite the software according to the citation information provided
+with the corresponding version of IchthyoData.
+
+Citation information is provided in the CITATION.cff file and, when
+available, through the DOI associated with the software release.
+
+3. Restrictions
+
+Unless prior written permission is obtained from the copyright holder,
+users may not:
+
+(a) modify, adapt, translate, or create derivative versions of the
+IchthyoData source code;
+
+(b) redistribute, reproduce, sublicense, publish, or otherwise make
+copies or modified versions of the source code available to third
+parties;
+
+(c) incorporate the source code, in whole or in part, into another
+software product, platform, or service;
+
+(d) sell, license, rent, commercialize, or otherwise use IchthyoData
+or its source code for commercial purposes.
+
+Permission for uses not covered by this license may be requested from
+the copyright holder.
+
+4. Third-party data and resources
+
+This license applies only to the original IchthyoData software and
+materials for which the copyright holder owns the applicable rights.
+
+Occurrence records, taxonomic information, geographic data, map
+resources, and other information obtained from external providers are
+not licensed under this license.
+
+Such third-party content remains subject to the terms, licenses,
+citation requirements, and attribution requirements established by
+the respective data providers, publishers, institutions, and
+copyright holders.
+
+5. Data and results
+
+IchthyoData provides tools for accessing, integrating, visualizing,
+and exporting information obtained from multiple sources.
+
+The software does not certify or guarantee the taxonomic accuracy,
+geographic accuracy, completeness, currency, quality, or fitness for
+a particular purpose of records obtained through external data
+sources.
+
+Users are responsible for evaluating, validating, interpreting, and
+appropriately citing the data used in their analyses and for any
+results, analyses, maps, publications, or other products derived from
+their use of IchthyoData.
+
+6. Disclaimer
+
+IchthyoData is provided "as is", without warranty of any kind, express
+or implied, including but not limited to warranties of accuracy,
+reliability, availability, merchantability, fitness for a particular
+purpose, or non-infringement.
+
+In no event shall the copyright holder be liable for any claim,
+damage, loss, or other liability arising from the use of the software,
+the information retrieved through it, or products derived from such
+use.
+
+7. Third-party software
+
+IchthyoData may use third-party libraries, services, APIs, and other
+software components. Such components remain subject to their own
+licenses and terms of use. Nothing in this license modifies or
+supersedes the licenses applicable to those components.

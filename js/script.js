@@ -6153,7 +6153,11 @@ function criarRegistroCSV({
     country,
     basisOfRecord,
     recordID,
-    sourceURL
+    sourceURL,
+    datasetKey,
+    datasetTitle,
+    publishingOrg,
+    license
 }) {
     return {
         source: valorCSV(source),
@@ -6169,7 +6173,11 @@ function criarRegistroCSV({
         country: valorCSV(country),
         basisOfRecord: valorCSV(basisOfRecord),
         recordID: valorCSV(recordID),
-        sourceURL: valorCSV(sourceURL)
+        sourceURL: valorCSV(sourceURL),
+        datasetKey: valorCSV(datasetKey),
+        datasetTitle: valorCSV(datasetTitle),
+        publishingOrg: valorCSV(publishingOrg),
+        license: valorCSV(license)
     };
 }
 
@@ -6223,236 +6231,34 @@ function prepararRegistrosCSV() {
                     basisOfRecord:
                         registro.basisOfRecord,
                     recordID:
-                        registro.key,
-                    sourceURL:
-                        registro.key
-                            ? "https://www.gbif.org/occurrence/" +
-                              registro.key
-                            : ""
-                })
+    registro.key,
+
+sourceURL:
+    registro.key
+        ? "https://www.gbif.org/occurrence/" +
+          registro.key
+        : "",
+
+datasetKey:
+    registro.datasetKey,
+
+datasetTitle:
+    registro.datasetTitle ||
+    registro.datasetName ||
+    "",
+
+publishingOrg:
+    registro.publishingOrganizationTitle ||
+    registro.publishingOrg ||
+    "",
+
+license:
+    registro.license
+            })
             );
         });
     }
-
-    // --------------------------------------------------------
-    // speciesLink
-    // --------------------------------------------------------
-
-    if (
-        typeof estadoSpeciesLink !== "undefined" &&
-        Array.isArray(estadoSpeciesLink.features)
-    ) {
-        estadoSpeciesLink.features.forEach(
-            function (feature) {
-                if (
-                    !feature ||
-                    !feature.geometry ||
-                    !Array.isArray(
-                        feature.geometry.coordinates
-                    )
-                ) {
-                    return;
-                }
-
-                const longitude =
-                    Number(
-                        feature.geometry.coordinates[0]
-                    );
-
-                const latitude =
-                    Number(
-                        feature.geometry.coordinates[1]
-                    );
-
-                if (
-                    !Number.isFinite(latitude) ||
-                    !Number.isFinite(longitude)
-                ) {
-                    return;
-                }
-
-                const registro =
-                    feature.properties || {};
-
-                registrosCSV.push(
-                    criarRegistroCSV({
-                        source: "speciesLink",
-
-                        scientificName:
-                            obterPrimeiroValor(
-                                registro,
-                                "scientificName",
-                                "ScientificName"
-                            ),
-
-                        decimalLatitude:
-                            latitude,
-
-                        decimalLongitude:
-                            longitude,
-
-                        institutionCode:
-                            obterPrimeiroValor(
-                                registro,
-                                "institutionCode",
-                                "InstitutionCode"
-                            ),
-
-                        collectionCode:
-                            obterPrimeiroValor(
-                                registro,
-                                "collectionCode",
-                                "CollectionCode"
-                            ),
-
-                        catalogNumber:
-                            obterPrimeiroValor(
-                                registro,
-                                "catalogNumber",
-                                "CatalogNumber"
-                            ),
-
-                        individualCount:
-                            obterPrimeiroValor(
-                                registro,
-                                "individualCount",
-                                "IndividualCount"
-                            ),
-
-                        locality:
-                            obterPrimeiroValor(
-                                registro,
-                                "locality",
-                                "Locality"
-                            ),
-
-                        stateProvince:
-                            obterPrimeiroValor(
-                                registro,
-                                "stateProvince",
-                                "StateProvince"
-                            ),
-
-                        country:
-                            obterPrimeiroValor(
-                                registro,
-                                "country",
-                                "Country"
-                            ),
-
-                        basisOfRecord:
-                            obterPrimeiroValor(
-                                registro,
-                                "basisOfRecord",
-                                "BasisOfRecord"
-                            ),
-
-                        recordID:
-                            obterPrimeiroValor(
-                                registro,
-                                "recordID",
-                                "occurrenceID",
-                                "catalogNumber"
-                            ),
-
-                        sourceURL:
-                            obterPrimeiroValor(
-                                registro,
-                                "recordedByURL",
-                                "occurrenceID"
-                            )
-                    })
-                );
-            }
-        );
-    }
-
-    // --------------------------------------------------------
-    // FishNet2
-    // --------------------------------------------------------
-
-    if (
-        typeof estadoFishNet2 !== "undefined" &&
-        Array.isArray(estadoFishNet2.registros)
-    ) {
-        estadoFishNet2.registros.forEach(
-            function (registro) {
-                const latitude =
-                    Number(
-                        registro.Latitude ??
-                        registro.latitude ??
-                        registro.DecimalLatitude ??
-                        registro.decimalLatitude
-                    );
-
-                const longitude =
-                    Number(
-                        registro.Longitude ??
-                        registro.longitude ??
-                        registro.DecimalLongitude ??
-                        registro.decimalLongitude
-                    );
-
-                if (
-                    !Number.isFinite(latitude) ||
-                    !Number.isFinite(longitude)
-                ) {
-                    return;
-                }
-
-                registrosCSV.push(
-                    criarRegistroCSV({
-                        source: "FishNet2",
-
-                        scientificName:
-                            registro.ScientificName,
-
-                        decimalLatitude:
-                            latitude,
-
-                        decimalLongitude:
-                            longitude,
-
-                        institutionCode:
-                            registro.InstitutionCode,
-
-                        collectionCode:
-                            registro.CollectionCode,
-
-                        catalogNumber:
-                            registro.CatalogNumber,
-
-                        individualCount:
-                            registro.IndividualCount,
-
-                        locality:
-                            registro.Locality ||
-                            registro.County,
-
-                        stateProvince:
-                            registro.StateProvince,
-
-                        country:
-                            registro.Country,
-
-                        basisOfRecord:
-                            registro.BasisOfRecord,
-
-                        recordID:
-                            registro.OccurrenceID ||
-                            registro.occurrenceID ||
-                            registro.CatalogNumber,
-
-                        sourceURL:
-                            registro.OccurrenceID ||
-                            registro.occurrenceID ||
-                            ""
-                    })
-                );
-            }
-        );
-    }
-
+    
     // --------------------------------------------------------
     // PLAZI
     // --------------------------------------------------------
@@ -6559,21 +6365,25 @@ function exportarRegistrosCSV() {
     }
 
     const colunas = [
-        "source",
-        "scientificName",
-        "decimalLatitude",
-        "decimalLongitude",
-        "institutionCode",
-        "collectionCode",
-        "catalogNumber",
-        "individualCount",
-        "locality",
-        "stateProvince",
-        "country",
-        "basisOfRecord",
-        "recordID",
-        "sourceURL"
-    ];
+    "source",
+    "scientificName",
+    "decimalLatitude",
+    "decimalLongitude",
+    "institutionCode",
+    "collectionCode",
+    "catalogNumber",
+    "individualCount",
+    "locality",
+    "stateProvince",
+    "country",
+    "basisOfRecord",
+    "recordID",
+    "sourceURL",
+    "datasetKey",
+    "datasetTitle",
+    "publishingOrg",
+    "license"
+];
 
     const linhas = [
     colunas.join(";")

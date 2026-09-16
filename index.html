@@ -436,6 +436,17 @@ serão incluídas na exportação.
     <button type="button" id="exportar-dados-csv">
         Exportar CSV
     </button>
+
+<p class="nota-exportacao-csv">
+    A exportação em CSV inclui registros do GBIF e Plazi.
+    Dados de speciesLink e FishNet2 estão disponíveis apenas para consulta
+    e visualização. Dados próprios importados pelo usuário não são reexportados.
+</p>
+
+
+
+
+
 </div>
                         
                         
@@ -695,24 +706,38 @@ serão incluídas na exportação.
     </main>
 
     <footer>
-        <div>
-            <strong>IchthyoData</strong>
+    <div>
+        <strong>IchthyoData</strong>
 
-            <p>
-                Plataforma de integração e exploração de dados de ocorrência de peixes neotropicais.
-            </p>
+        <p>
+            Plataforma de integração e exploração de dados de ocorrência de peixes neotropicais.
+        </p>
 
-            <p>
-                Desenvolvida por Laura Modesti Donin — 2026
-            </p>
-        </div>
+        <p>
+            Desenvolvida por Laura Modesti Donin — LES/UFSCar — 2026
+        </p>
 
-        <img
-            class="logo-autoria"
-            src="imagens/logo-laura-donin.png"
-            alt="Logo de autoria de Laura M. Donin"
-        >
-    </footer>
+        <p class="footer-versao">
+            Versão 1.0.0
+        </p>
+
+        <p class="footer-links">
+            <a href="CITATION.cff" target="_blank">Como citar</a>
+            <span>•</span>
+            <a href="LICENSE" target="_blank">Licença</a>
+            <span>•</span>
+            <a href="TERMS_OF_USE.md" target="_blank">Termos de uso</a>
+            <span>•</span>
+            <a href="DATA_SOURCES.md" target="_blank">Fontes de dados</a>
+        </p>
+    </div>
+
+    <img
+        class="logo-autoria"
+        src="imagens/logo-laura-donin.png"
+        alt="Logo de autoria de Laura M. Donin"
+    >
+</footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 

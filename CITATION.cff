@@ -1,7 +1,8 @@
 cff-version: 1.2.0
+
 message: "Se você utilizar o IchthyoData em pesquisa científica, cite o software conforme indicado abaixo."
 
-title: "IchthyoData: plataforma para exploração integrada de registros de ocorrências de peixes neotropicais"
+title: "IchthyoData: plataforma de integração e exploração de dados de ocorrência de peixes neotropicais"
 
 type: software
 
@@ -11,25 +12,25 @@ authors:
     orcid: "https://orcid.org/0000-0002-9609-6400"
     affiliation: "Laboratório de Estudos Subterrâneos, Universidade Federal de São Carlos"
 
-version: "0.1.0-beta"
-
-date-released: 2026-08-02
+version: "1.0.0"
 
 url: "https://lauraa-md.github.io/IchthyoData/"
 
 repository-code: "https://github.com/Lauraa-MD/IchthyoData"
 
 abstract: >-
-  Plataforma em desenvolvimento para consulta, integração e visualização
-  de registros de ocorrências de peixes neotropicais, com ferramentas
-  destinadas à exploração espacial e biogeográfica.
+  IchthyoData é uma plataforma científica para integração, consulta,
+  visualização, comparação e exportação de dados de ocorrência de peixes
+  neotropicais provenientes de diferentes fontes de dados. A plataforma
+  permite a exploração espacial dos registros de ocorrência e a integração
+  com dados próprios fornecidos pelo usuário.
 
 keywords:
   - ichthyology
   - Neotropical fishes
   - biodiversity
-  - biogeography
-  - occurrence records
+  - occurrence data
+  - biological collections
+  - data integration
+  - spatial data
   - GBIF
-
-license: MIT
