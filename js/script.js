@@ -2967,38 +2967,7 @@ if (limitesSpeciesLink.isValid()) {
 */
 
 
-function ajustarMapaAosPontos() {
 
-    const pontos = [];
-
-    mapaEspecies.eachLayer(function (layer) {
-
-        if (
-            layer instanceof L.Marker ||
-            layer instanceof L.CircleMarker
-        ) {
-            pontos.push(layer.getLatLng());
-        }
-
-    });
-
-    if (pontos.length === 0) {
-        return;
-    }
-
-    const limites = L.latLngBounds(pontos);
-
-    if (limites.isValid()) {
-        mapaEspecies.fitBounds(
-            limites,
-            {
-                padding: [50, 50],
-                maxZoom: 8,
-                animate: false
-            }
-        );
-    }
-}
 
 
     return {
